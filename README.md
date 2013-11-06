@@ -1,4 +1,5 @@
 ffb
 ===
 
-Statistical Fantasy Football Performance Predictor written in MATLAB
+A Statistical Fantasy Football Performance Predictor written in MATLAB
+
