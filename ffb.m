@@ -19,6 +19,7 @@ FUMBLE_PENALTY = 2;
 INT_PENALTY = 2;
 
 
+
 d(isnan(d)) = 0 ;
 
 N = 30;
