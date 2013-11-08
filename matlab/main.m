@@ -7,51 +7,12 @@ clc
 % Import and format data
 %###############################################################
 
-%[N,name,team,year,gp,rush_num,rush_yds,rush_tds,receiving_targets,receiving_catches,receiving_yds,receiving_tds] = read_and_format_data();
+[N,name,team,year,games_played,rush_num,rush_yds,rush_tds,receiving_targets,receiving_catches,receiving_yds,receiving_tds] = read_and_format_data();
+
+%strcmp(name(end-2,:),name(end-3,:))
 
 
-
-
-
-
-
-
-data = read_mixed_csv('../data_formatted/formatted_wr_v3.csv',',');
-data(1,:) = [];
-data(:,12:end) = [];
-
-emptyIndex = cellfun(@isempty,data);
-data(emptyIndex) = {'0'};
-
-N = size(data,1);
-
-name = cell(N,1);
-for i=1:N
-    name{i} = num2str(cell2mat(data(i,1)));
-end
-
-team = cell(N,1);
-for i=1:N
-    team{i} = num2str(cell2mat(data(i,2)));
-end
-
-year = zeros(N,1);
-for i=1:N
-    year(i) = uint16(str2num(cell2mat(data(i,3))));
-end
-
-gp = zeros(N,1);
-for i=1:N
-    gp(i) = uint16(str2num(cell2mat(data(i,4))));
-end
-
-rush_num = zeros(N,1);
-for i=1:N
-    rush_num(i) = str2num(cell2mat(data(i,5)));
-end
-
-
-
+strmatch('Johnson | Calvin', name, 'exact')
 
 
 

@@ -1,4 +1,4 @@
-function [N,name,team,year,gp,rush_num,rush_yds,rush_tds,receiving_targets,receiving_catches,receiving_yds,receiving_tds] = read_and_format_data()
+function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds,receiving_targets,receiving_catches,receiving_yds,receiving_tds] = read_and_format_data()
 
     data = read_mixed_csv('../data_formatted/formatted_wr_v3.csv',',');
     data(1,:) = [];
@@ -9,59 +9,16 @@ function [N,name,team,year,gp,rush_num,rush_yds,rush_tds,receiving_targets,recei
 
     N = size(data,1);
 
-    name = cell(N,1);
-    for i=1:N
-        name{i} = num2str(cell2mat(data(i,1)));
-    end
-
-    team = cell(N,1);
-    for i=1:N
-        team{i} = num2str(cell2mat(data(i,2)));
-    end
-
-    year = zeros(N,1);
-    for i=1:N
-        year(i) = uint16(str2num(cell2mat(data(i,3))));
-    end
-
-    gp = zeros(N,1);
-    for i=1:N
-        gp(i) = uint16(str2num(cell2mat(data(i,4))));
-    end
-
-    rush_num = zeros(N,1);
-    for i=1:N
-        rush_num(i) = str2num(cell2mat(data(i,5)));
-    end
-
-    rush_yds = zeros(N,1);
-    for i=1:N
-        rush_yds(i) = str2num(cell2mat(data(i,6)));
-    end
-
-    rush_tds = zeros(N,1);
-    for i=1:N
-        rush_tds(i) = str2num(cell2mat(data(i,7)));
-    end
-
-    receiving_targets = zeros(N,1);
-    for i=1:N
-        receiving_targets(i) = str2num(cell2mat(data(i,8)));
-    end
-
-    receiving_catches = zeros(N,1);
-    for i=1:N
-        receiving_catches(i) = str2num(cell2mat(data(i,9)));
-    end
-
-    receiving_yds = zeros(N,1);
-    for i=1:N
-        receiving_yds(i) = str2num(cell2mat(data(i,10)));
-    end
-
-    receiving_tds = zeros(N,1);
-    for i=1:N
-        receiving_tds(i) = str2num(cell2mat(data(i,11)));
-    end
+    name = char(data(:,1));
+    team = char(data(:,2));
+    year = str2num(cell2mat(data(:,3)));
+    games_played = str2num(char(data(:,4)));
+    rush_num = str2num(char(data(:,5)));
+    rush_yds = str2num(char(data(:,6)));
+    rush_tds = str2num(char(data(:,7)));
+    receiving_targets = str2num(char(data(:,8)));
+    receiving_catches = str2num(char(data(:,9)));
+    receiving_yds = str2num(char(data(:,10)));
+    receiving_tds = str2num(char(data(:,11)));
 
 end
