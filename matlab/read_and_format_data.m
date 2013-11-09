@@ -28,6 +28,7 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2012,receiving_yds2012,receiving_tds2012, ...
     points2012_eoy, points2012_pg ] = read_and_format_data()
 
+    % Read raw complete data file into cell matrix
     data = read_mixed_csv('../data_formatted/formatted_wr_v3.csv',',');
     data(1,:) = [];
     data(:,12:end) = [];

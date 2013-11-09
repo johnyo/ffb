@@ -2,7 +2,6 @@ close all
 clear all
 clc
 
-
 %###############################################################
 % Import and format data
 %###############################################################
@@ -37,54 +36,16 @@ clc
     receiving_catches2012,receiving_yds2012,receiving_tds2012, ...
     points2012_eoy, points2012_pg ] = read_and_format_data();
 
-%strcmp(name(end-2,:),name(end-3,:))
-
-% figure
-% hold on
-% indices = strmatch('Johnson | Calvin', name, 'exact')
-% plot(year(indices),points_eoy(indices))
-
-
-% 
-% N = 20;
-% a = name(1:N,:);
-% i = 1;
-% num_players = 0;
-% while(i <= N)
-%    num_players = num_players + 1;
-%    indices =  strmatch(a(i,:), a, 'exact');
-%    
-%    % indicies now contains indices for a single player over all years
-%    
-%    
-%    
-%    i = indices(end)+1;
-% end
-
-% rank players for 2007
-
 M = 30;
-% 
-% FigHandle = figure('Position', [1000, 1000, 1000, 1000]);
-% subplot(3,2,1)
-% hold on
-% for i = 1:M
-%    name = espn2012(i,:)
-%    index = strmatch(name, name2012, 'exact')
-%    plot(i,points2012_eoy(index),'ro')
-%    plot(i,points2012_eoy(i),'b+')
-% end
-% title('2012 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-% legend('ESPN','End of Year')
 
 
 
 
-%###############################################################
-% Plot ESPN Data
-%###############################################################
+% %###############################################################
+% % Plot ESPN Data
+% %###############################################################
 
-FigHandle = figure('Position', [2000, 2000, 800, 500]);
+espn = figure('Position', [2000, 2000, 600, 350]);
 
 subplot(3,2,1)
 hold on
@@ -94,8 +55,9 @@ for i = 1:M
    plot(i,points2012_eoy(index),'ro')
    plot(i,points2012_eoy(i),'b+')
 end
-title('2012 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
+title('2012 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,2)
 hold on
@@ -105,8 +67,9 @@ for i = 1:M
    plot(i,points2011_eoy(index),'ro')
    plot(i,points2011_eoy(i),'b+')
 end
-title('2011 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
+title('2011 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,3)
 hold on
@@ -116,8 +79,9 @@ for i = 1:M
    plot(i,points2010_eoy(index),'ro')
    plot(i,points2010_eoy(i),'b+')
 end
-title('2010 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
+title('2010 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,4)
 hold on
@@ -127,8 +91,9 @@ for i = 1:M
    plot(i,points2009_eoy(index),'ro')
    plot(i,points2009_eoy(i),'b+')
 end
-title('2009 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
+title('2009 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,5)
 hold on
@@ -138,8 +103,9 @@ for i = 1:M
    plot(i,points2008_eoy(index),'ro')
    plot(i,points2008_eoy(i),'b+')
 end
-title('2008 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
+title('2008 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,6)
 hold on
@@ -149,18 +115,19 @@ for i = 1:M
    plot(i,points2007_eoy(index),'ro')
    plot(i,points2007_eoy(i),'b+')
 end
-title('2007 End of Year Fantasy Points: ESPN Preseason vs. Actual')
-legend('ESPN','End of Year')
-
-
-
-
+title('2007 Top 30: ESPN Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
+leg_espn = legend('ESPN','Actual');
+newPosition = [0.45 0.0 0.15 0.08];
+newUnits = 'normalized';
+set(leg_espn,'Position', newPosition,'Units', newUnits);
 
 %###############################################################
 % Plot Yahoo Data
 %###############################################################
 
-FigHandle = figure('Position', [2000, 2000, 800, 500]);
+yahoo = figure('Position', [2000, 2000, 600, 350]);
 
 subplot(3,2,1)
 hold on
@@ -170,8 +137,9 @@ for i = 1:M
    plot(i,points2012_eoy(index),'ro')
    plot(i,points2012_eoy(i),'b+')
 end
-title('2012 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2012 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,2)
 hold on
@@ -181,8 +149,9 @@ for i = 1:M
    plot(i,points2011_eoy(index),'ro')
    plot(i,points2011_eoy(i),'b+')
 end
-title('2011 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2011 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,3)
 hold on
@@ -192,8 +161,9 @@ for i = 1:M
    plot(i,points2010_eoy(index),'ro')
    plot(i,points2010_eoy(i),'b+')
 end
-title('2010 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2010 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,4)
 hold on
@@ -203,8 +173,9 @@ for i = 1:M
    plot(i,points2009_eoy(index),'ro')
    plot(i,points2009_eoy(i),'b+')
 end
-title('2009 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2009 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,5)
 hold on
@@ -214,8 +185,9 @@ for i = 1:M
    plot(i,points2008_eoy(index),'ro')
    plot(i,points2008_eoy(i),'b+')
 end
-title('2008 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2008 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
 
 subplot(3,2,6)
 hold on
@@ -225,5 +197,207 @@ for i = 1:M
    plot(i,points2007_eoy(index),'ro')
    plot(i,points2007_eoy(i),'b+')
 end
-title('2007 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
-legend('Yahoo','End of Year')
+title('2007 Top 30: Yahoo Preseason vs. Actual')
+xlabel('Ranking')
+ylabel('Fantasy Points')
+leg_yahoo = legend('Yahoo','Actual');
+newPosition = [0.45 0.0 0.15 0.08];
+newUnits = 'normalized';
+set(leg_yahoo,'Position', newPosition,'Units', newUnits);
+
+%###############################################################
+% Compute Positional Error
+%###############################################################
+
+% The point difference visualation above is useful for viewing data
+% but the most important thing for a fantasy football draft is the
+% final, year-end position rank for each player.
+
+espn2007_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2007(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2007, 'exact');
+    % Add the result to our output array
+    espn2007_results(i) = name_eof_place;
+end
+err_espn2007 = sum(quantify_error(espn2007_results,1:30));
+
+espn2008_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2008(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2008, 'exact');
+    % Add the result to our output array
+    espn2008_results(i) = name_eof_place;
+end
+err_espn2008 = sum(quantify_error(espn2008_results,1:30));
+
+espn2009_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2009(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2009, 'exact');
+    % Add the result to our output array
+    espn2009_results(i) = name_eof_place;
+end
+err_espn2009 = sum(quantify_error(espn2009_results,1:30));
+
+espn2010_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2010(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2010, 'exact');
+    % Add the result to our output array
+    espn2010_results(i) = name_eof_place;
+end
+err_espn2010 = sum(quantify_error(espn2010_results,1:30));
+
+espn2011_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2011(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2011, 'exact');
+    % Add the result to our output array
+    espn2011_results(i) = name_eof_place;
+end
+err_espn2011 = sum(quantify_error(espn2011_results,1:30));
+
+espn2012_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = espn2012(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2012, 'exact');
+    % Add the result to our output array
+    espn2012_results(i) = name_eof_place;
+end
+err_espn2012 = sum(quantify_error(espn2012_results,1:30));
+
+yahoo2007_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2007(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2007, 'exact');
+    % Add the result to our output array
+    yahoo2007_results(i) = name_eof_place;
+end
+err_yahoo2007 = sum(quantify_error(yahoo2007_results,1:30));
+
+yahoo2008_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2008(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2008, 'exact');
+    % Add the result to our output array
+    yahoo2008_results(i) = name_eof_place;
+end
+err_yahoo2008 = sum(quantify_error(yahoo2008_results,1:30));
+
+yahoo2009_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2009(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2009, 'exact');
+    % Add the result to our output array
+    yahoo2009_results(i) = name_eof_place;
+end
+err_yahoo2009 = sum(quantify_error(yahoo2009_results,1:30));
+
+yahoo2010_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2010(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2010, 'exact');
+    % Add the result to our output array
+    yahoo2010_results(i) = name_eof_place;
+end
+err_yahoo2010 = sum(quantify_error(yahoo2010_results,1:30));
+
+yahoo2011_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2011(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2011, 'exact');
+    % Add the result to our output array
+    yahoo2011_results(i) = name_eof_place;
+end
+err_yahoo2011 = sum(quantify_error(yahoo2011_results,1:30));
+
+yahoo2012_results = zeros(1,M);
+for i = 1:M
+    % Go through ESPN's top M players in order
+    name = yahoo2012(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2012, 'exact');
+    % Add the result to our output array
+    yahoo2012_results(i) = name_eof_place;
+end
+err_yahoo2012 = sum(quantify_error(yahoo2012_results,1:30));
+
+err_espn = [err_espn2007, err_espn2008, err_espn2009, ...
+    err_espn2010, err_espn2011, err_espn2012];
+
+err_yahoo = [err_yahoo2007, err_yahoo2008, err_yahoo2009, ...
+    err_yahoo2010, err_yahoo2011, err_yahoo2012];
+
+%###############################################################
+% Plot Rank Errors
+%###############################################################
+
+rankErr = figure('Position', [2000, 2000, 600, 350]);
+
+hold on
+plot(2007:2012, err_espn, 'ro','LineWidth',2)
+plot(2007:2012, err_yahoo, 'b+','LineWidth',2)
+title('ESPN/Yahoo Preseason Ranking Error')
+legend('ESPN','Yahoo')
+xlabel('Year')
+ylabel('Error')
+
+%###############################################################
+% Save Images
+%###############################################################
+
+% saveas(espn, 'figs/espn.png','png');
+% saveas(yahoo, 'figs/yahoo.png','png');
+% saveas(rankErr, 'figs/rankErr.png','png');
+
+
+
+
+
