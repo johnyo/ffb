@@ -6,21 +6,27 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     name2007,team2007,year2007,games_played2007,rush_num2007, ...
     rush_yds2007,rush_tds2007,receiving_targets2007, ...
     receiving_catches2007,receiving_yds2007,receiving_tds2007, ...
+    points2007_eoy, points2007_pg, ...
     name2008,team2008,year2008,games_played2008,rush_num2008, ...
     rush_yds2008,rush_tds2008,receiving_targets2008, ...
     receiving_catches2008,receiving_yds2008,receiving_tds2008, ...
+    points2008_eoy, points2008_pg, ...
     name2009,team2009,year2009,games_played2009,rush_num2009, ...
     rush_yds2009,rush_tds2009,receiving_targets2009, ...
     receiving_catches2009,receiving_yds2009,receiving_tds2009, ...
+    points2009_eoy, points2009_pg, ...
     name2010,team2010,year2010,games_played2010,rush_num2010, ...
     rush_yds2010,rush_tds2010,receiving_targets2010, ...
     receiving_catches2010,receiving_yds2010,receiving_tds2010, ...
+    points2010_eoy, points2010_pg, ...
     name2011,team2011,year2011,games_played2011,rush_num2011, ...
     rush_yds2011,rush_tds2011,receiving_targets2011, ...
     receiving_catches2011,receiving_yds2011,receiving_tds2011, ...
+    points2011_eoy, points2011_pg, ...
     name2012,team2012,year2012,games_played2012,rush_num2012, ...
     rush_yds2012,rush_tds2012,receiving_targets2012, ...
-    receiving_catches2012,receiving_yds2012,receiving_tds2012 ] = read_and_format_data()
+    receiving_catches2012,receiving_yds2012,receiving_tds2012, ...
+    points2012_eoy, points2012_pg ] = read_and_format_data()
 
     data = read_mixed_csv('../data_formatted/formatted_wr_v3.csv',',');
     data(1,:) = [];
@@ -32,7 +38,7 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     N = size(data,1);
     M = 11;
 
-    % Import Raw Data
+    % Import raw data for all players for all years
     name = char(data(:,1));
     team = char(data(:,2));
     year = str2num(cell2mat(data(:,3)));
@@ -117,6 +123,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2007 = str2num(char(data2007(:,9)));
     receiving_yds2007 = str2num(char(data2007(:,10)));
     receiving_tds2007 = str2num(char(data2007(:,11)));
+    points2007_eoy = rush_yds2007/RUSH_YDS_PER_PT + rush_tds2007*RUSH_TD_PTS ...
+        + receiving_yds2007/RECEIVE_YDS_PER_PT + receiving_tds2007*RECEIVE_TD_PTS;
+    points2007_pg = points2007_eoy ./ games_played2007;
+    % Now sort everything by eoy points
+    [points2007_eoy, SortIndex] = sort(points2007_eoy);
+    points2007_eoy = flipud(points2007_eoy);
+    name_cell_2007 = flipud(data2007(:,1));
+    name_cell_2007 = name_cell_2007(SortIndex);
+    name2007 = char(name_cell_2007);
+    team_cell_2007 = flipud(data2007(:,2));
+    team_cell_2007 = team_cell_2007(SortIndex);
+    team2007 = char(team_cell_2007);
+    rush_num2007 = flipud(rush_num2007(SortIndex));
+    rush_yds2007 = flipud(rush_yds2007(SortIndex));
+    rush_tds2007 = flipud(rush_tds2007(SortIndex));
+    receiving_targets2007 = flipud(receiving_targets2007(SortIndex));
+    receiving_catches2007 = flipud(receiving_catches2007(SortIndex));
+    receiving_yds2007 = flipud(receiving_yds2007(SortIndex));
+    receiving_tds2007 = flipud(receiving_tds2007(SortIndex));
+    points2007_pg = flipud(points2007_pg(SortIndex));
     
     % Data for 2008
     logical2008 = (year == 2008);
@@ -141,6 +167,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2008 = str2num(char(data2008(:,9)));
     receiving_yds2008 = str2num(char(data2008(:,10)));
     receiving_tds2008 = str2num(char(data2008(:,11)));
+    points2008_eoy = rush_yds2008/RUSH_YDS_PER_PT + rush_tds2008*RUSH_TD_PTS ...
+        + receiving_yds2008/RECEIVE_YDS_PER_PT + receiving_tds2008*RECEIVE_TD_PTS;
+    points2008_pg = points2008_eoy ./ games_played2008;
+    % Now sort everything by eoy points
+    [points2008_eoy, SortIndex] = sort(points2008_eoy);
+    points2008_eoy = flipud(points2008_eoy);
+    name_cell_2008 = flipud(data2008(:,1));
+    name_cell_2008 = name_cell_2008(SortIndex);
+    name2008 = char(name_cell_2008);
+    team_cell_2008 = flipud(data2008(:,2));
+    team_cell_2008 = team_cell_2008(SortIndex);
+    team2008 = char(team_cell_2008);
+    rush_num2008 = flipud(rush_num2008(SortIndex));
+    rush_yds2008 = flipud(rush_yds2008(SortIndex));
+    rush_tds2008 = flipud(rush_tds2008(SortIndex));
+    receiving_targets2008 = flipud(receiving_targets2008(SortIndex));
+    receiving_catches2008 = flipud(receiving_catches2008(SortIndex));
+    receiving_yds2008 = flipud(receiving_yds2008(SortIndex));
+    receiving_tds2008 = flipud(receiving_tds2008(SortIndex));
+    points2008_pg = flipud(points2008_pg(SortIndex));
     
     % Data for 2009
     logical2009 = (year == 2009);
@@ -165,6 +211,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2009 = str2num(char(data2009(:,9)));
     receiving_yds2009 = str2num(char(data2009(:,10)));
     receiving_tds2009 = str2num(char(data2009(:,11)));
+	points2009_eoy = rush_yds2009/RUSH_YDS_PER_PT + rush_tds2009*RUSH_TD_PTS ...
+        + receiving_yds2009/RECEIVE_YDS_PER_PT + receiving_tds2009*RECEIVE_TD_PTS;
+    points2009_pg = points2009_eoy ./ games_played2009;
+    % Now sort everything by eoy points
+    [points2009_eoy, SortIndex] = sort(points2009_eoy);
+    points2009_eoy = flipud(points2009_eoy);
+    name_cell_2009 = flipud(data2009(:,1));
+    name_cell_2009 = name_cell_2009(SortIndex);
+    name2009 = char(name_cell_2009);
+    team_cell_2009 = flipud(data2009(:,2));
+    team_cell_2009 = team_cell_2009(SortIndex);
+    team2009 = char(team_cell_2009);
+    rush_num2009 = flipud(rush_num2009(SortIndex));
+    rush_yds2009 = flipud(rush_yds2009(SortIndex));
+    rush_tds2009 = flipud(rush_tds2009(SortIndex));
+    receiving_targets2009 = flipud(receiving_targets2009(SortIndex));
+    receiving_catches2009 = flipud(receiving_catches2009(SortIndex));
+    receiving_yds2009 = flipud(receiving_yds2009(SortIndex));
+    receiving_tds2009 = flipud(receiving_tds2009(SortIndex));
+    points2009_pg = flipud(points2009_pg(SortIndex));
     
     % Data for 2010
     logical2010 = (year == 2010);
@@ -189,6 +255,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2010 = str2num(char(data2010(:,9)));
     receiving_yds2010 = str2num(char(data2010(:,10)));
     receiving_tds2010 = str2num(char(data2010(:,11)));
+    points2010_eoy = rush_yds2010/RUSH_YDS_PER_PT + rush_tds2010*RUSH_TD_PTS ...
+        + receiving_yds2010/RECEIVE_YDS_PER_PT + receiving_tds2010*RECEIVE_TD_PTS;
+    points2010_pg = points2010_eoy ./ games_played2010;
+    % Now sort everything by eoy points
+    [points2010_eoy, SortIndex] = sort(points2010_eoy);
+    points2010_eoy = flipud(points2010_eoy);
+    name_cell_2010 = flipud(data2010(:,1));
+    name_cell_2010 = name_cell_2010(SortIndex);
+    name2010 = char(name_cell_2010);
+    team_cell_2010 = flipud(data2010(:,2));
+    team_cell_2010 = team_cell_2010(SortIndex);
+    team2010 = char(team_cell_2010);
+    rush_num2010 = flipud(rush_num2010(SortIndex));
+    rush_yds2010 = flipud(rush_yds2010(SortIndex));
+    rush_tds2010 = flipud(rush_tds2010(SortIndex));
+    receiving_targets2010 = flipud(receiving_targets2010(SortIndex));
+    receiving_catches2010 = flipud(receiving_catches2010(SortIndex));
+    receiving_yds2010 = flipud(receiving_yds2010(SortIndex));
+    receiving_tds2010 = flipud(receiving_tds2010(SortIndex));
+    points2010_pg = flipud(points2010_pg(SortIndex));
     
     % Data for 2011
     logical2011 = (year == 2011);
@@ -213,6 +299,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2011 = str2num(char(data2011(:,9)));
     receiving_yds2011 = str2num(char(data2011(:,10)));
     receiving_tds2011 = str2num(char(data2011(:,11)));
+    points2011_eoy = rush_yds2011/RUSH_YDS_PER_PT + rush_tds2011*RUSH_TD_PTS ...
+        + receiving_yds2011/RECEIVE_YDS_PER_PT + receiving_tds2011*RECEIVE_TD_PTS;
+    points2011_pg = points2011_eoy ./ games_played2011;
+    % Now sort everything by eoy points
+    [points2011_eoy, SortIndex] = sort(points2011_eoy);
+    points2011_eoy = flipud(points2011_eoy);
+    name_cell_2011 = flipud(data2011(:,1));
+    name_cell_2011 = name_cell_2011(SortIndex);
+    name2011 = char(name_cell_2011);
+    team_cell_2011 = flipud(data2011(:,2));
+    team_cell_2011 = team_cell_2011(SortIndex);
+    team2011 = char(team_cell_2011);
+    rush_num2011 = flipud(rush_num2011(SortIndex));
+    rush_yds2011 = flipud(rush_yds2011(SortIndex));
+    rush_tds2011 = flipud(rush_tds2011(SortIndex));
+    receiving_targets2011 = flipud(receiving_targets2011(SortIndex));
+    receiving_catches2011 = flipud(receiving_catches2011(SortIndex));
+    receiving_yds2011 = flipud(receiving_yds2011(SortIndex));
+    receiving_tds2011 = flipud(receiving_tds2011(SortIndex));
+    points2011_pg = flipud(points2011_pg(SortIndex));
     
     % Data for 2012
     logical2012 = (year == 2012);
@@ -226,8 +332,6 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
         i = i + 1;
     end
 	data2012(1,:) = [];
-    name2012 = char(data2012(:,1));
-    team2012 = char(data2012(:,2));
     year2012 = str2num(cell2mat(data2012(:,3)));
     games_played2012 = str2num(char(data2012(:,4)));
     rush_num2012 = str2num(char(data2012(:,5)));
@@ -237,5 +341,26 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     receiving_catches2012 = str2num(char(data2012(:,9)));
     receiving_yds2012 = str2num(char(data2012(:,10)));
     receiving_tds2012 = str2num(char(data2012(:,11)));
+    points2012_eoy = rush_yds2012/RUSH_YDS_PER_PT + rush_tds2012*RUSH_TD_PTS ...
+        + receiving_yds2012/RECEIVE_YDS_PER_PT + receiving_tds2012*RECEIVE_TD_PTS;
+    points2012_pg = points2012_eoy ./ games_played2012;
+    % Now sort everything by eoy points
+    [points2012_eoy, SortIndex] = sort(points2012_eoy);
+    points2012_eoy = flipud(points2012_eoy);
+    name_cell_2012 = flipud(data2012(:,1));
+    name_cell_2012 = name_cell_2012(SortIndex);
+    name2012 = char(name_cell_2012);
+    team_cell_2012 = flipud(data2012(:,2));
+    team_cell_2012 = team_cell_2012(SortIndex);
+    team2012 = char(team_cell_2012);
+    rush_num2012 = flipud(rush_num2012(SortIndex));
+    rush_yds2012 = flipud(rush_yds2012(SortIndex));
+    rush_tds2012 = flipud(rush_tds2012(SortIndex));
+    receiving_targets2012 = flipud(receiving_targets2012(SortIndex));
+    receiving_catches2012 = flipud(receiving_catches2012(SortIndex));
+    receiving_yds2012 = flipud(receiving_yds2012(SortIndex));
+    receiving_tds2012 = flipud(receiving_tds2012(SortIndex));
+    points2012_pg = flipud(points2012_pg(SortIndex));
+
     
 end
