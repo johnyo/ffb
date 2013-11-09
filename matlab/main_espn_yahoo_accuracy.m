@@ -63,17 +63,167 @@ clc
 
 % rank players for 2007
 
-index = 1:length(points2012_eoy);
-plot(index,points2012_eoy,'ro')
+M = 30;
+% 
+% FigHandle = figure('Position', [1000, 1000, 1000, 1000]);
+% subplot(3,2,1)
+% hold on
+% for i = 1:M
+%    name = espn2012(i,:)
+%    index = strmatch(name, name2012, 'exact')
+%    plot(i,points2012_eoy(index),'ro')
+%    plot(i,points2012_eoy(i),'b+')
+% end
+% title('2012 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+% legend('ESPN','End of Year')
+
+
+
+
+%###############################################################
+% Plot ESPN Data
+%###############################################################
+
+FigHandle = figure('Position', [2000, 2000, 800, 500]);
+
+subplot(3,2,1)
+hold on
+for i = 1:M
+   name = espn2012(i,:);
+   index = strmatch(name, name2012, 'exact');
+   plot(i,points2012_eoy(index),'ro')
+   plot(i,points2012_eoy(i),'b+')
+end
+title('2012 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
+
+subplot(3,2,2)
+hold on
+for i = 1:M
+   name = espn2011(i,:);
+   index = strmatch(name, name2011, 'exact');
+   plot(i,points2011_eoy(index),'ro')
+   plot(i,points2011_eoy(i),'b+')
+end
+title('2011 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
+
+subplot(3,2,3)
+hold on
+for i = 1:M
+   name = espn2010(i,:);
+   index = strmatch(name, name2010, 'exact');
+   plot(i,points2010_eoy(index),'ro')
+   plot(i,points2010_eoy(i),'b+')
+end
+title('2010 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
+
+subplot(3,2,4)
+hold on
+for i = 1:M
+   name = espn2009(i,:);
+   index = strmatch(name, name2009, 'exact');
+   plot(i,points2009_eoy(index),'ro')
+   plot(i,points2009_eoy(i),'b+')
+end
+title('2009 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
+
+subplot(3,2,5)
+hold on
+for i = 1:M
+   name = espn2008(i,:);
+   index = strmatch(name, name2008, 'exact');
+   plot(i,points2008_eoy(index),'ro')
+   plot(i,points2008_eoy(i),'b+')
+end
+title('2008 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
+
+subplot(3,2,6)
+hold on
+for i = 1:M
+   name = espn2007(i,:);
+   index = strmatch(name, name2007, 'exact');
+   plot(i,points2007_eoy(index),'ro')
+   plot(i,points2007_eoy(i),'b+')
+end
+title('2007 End of Year Fantasy Points: ESPN Preseason vs. Actual')
+legend('ESPN','End of Year')
 
 
 
 
 
+%###############################################################
+% Plot Yahoo Data
+%###############################################################
 
+FigHandle = figure('Position', [2000, 2000, 800, 500]);
 
+subplot(3,2,1)
+hold on
+for i = 1:M
+   name = yahoo2012(i,:);
+   index = strmatch(name, name2012, 'exact');
+   plot(i,points2012_eoy(index),'ro')
+   plot(i,points2012_eoy(i),'b+')
+end
+title('2012 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')
 
+subplot(3,2,2)
+hold on
+for i = 1:M
+   name = yahoo2011(i,:);
+   index = strmatch(name, name2011, 'exact');
+   plot(i,points2011_eoy(index),'ro')
+   plot(i,points2011_eoy(i),'b+')
+end
+title('2011 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')
 
+subplot(3,2,3)
+hold on
+for i = 1:M
+   name = yahoo2010(i,:);
+   index = strmatch(name, name2010, 'exact');
+   plot(i,points2010_eoy(index),'ro')
+   plot(i,points2010_eoy(i),'b+')
+end
+title('2010 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')
 
+subplot(3,2,4)
+hold on
+for i = 1:M
+   name = yahoo2009(i,:);
+   index = strmatch(name, name2009, 'exact');
+   plot(i,points2009_eoy(index),'ro')
+   plot(i,points2009_eoy(i),'b+')
+end
+title('2009 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')
 
+subplot(3,2,5)
+hold on
+for i = 1:M
+   name = yahoo2008(i,:);
+   index = strmatch(name, name2008, 'exact');
+   plot(i,points2008_eoy(index),'ro')
+   plot(i,points2008_eoy(i),'b+')
+end
+title('2008 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')
 
+subplot(3,2,6)
+hold on
+for i = 1:M
+   name = yahoo2007(i,:);
+   index = strmatch(name, name2007, 'exact');
+   plot(i,points2007_eoy(index),'ro')
+   plot(i,points2007_eoy(i),'b+')
+end
+title('2007 End of Year Fantasy Points: Yahoo Preseason vs. Actual')
+legend('Yahoo','End of Year')

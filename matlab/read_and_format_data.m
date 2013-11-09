@@ -76,20 +76,20 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     espn2012 = char(espn2012(:,2));
     espn2013 = read_mixed_csv('../data_formatted/espn2013.csv',',');
     espn2013 = char(espn2013(:,2));
-    yahoo2007 = read_mixed_csv('../data_formatted/espn2007.csv',',');
-    yahoo2007 = char(espn2007(:,2));
-    yahoo2008 = read_mixed_csv('../data_formatted/espn2008.csv',',');
-    yahoo2008 = char(espn2008(:,2));
-    yahoo2009 = read_mixed_csv('../data_formatted/espn2009.csv',',');
-    yahoo2009 = char(espn2009(:,2)); 
-    yahoo2010 = read_mixed_csv('../data_formatted/espn2010.csv',',');
-    yahoo2010 = char(espn2010(:,2)); 
-    yahoo2011 = read_mixed_csv('../data_formatted/espn2011.csv',',');
-    yahoo2011 = char(espn2011(:,2));
-    yahoo2012 = read_mixed_csv('../data_formatted/espn2012.csv',',');
-    yahoo2012 = char(espn2012(:,2)); 
-    yahoo2013 = read_mixed_csv('../data_formatted/espn2013.csv',',');
-    yahoo2013 = char(espn2013(:,2));
+    yahoo2007 = read_mixed_csv('../data_formatted/yahoo2007.csv',',');
+    yahoo2007 = char(yahoo2007(:,2));
+    yahoo2008 = read_mixed_csv('../data_formatted/yahoo2008.csv',',');
+    yahoo2008 = char(yahoo2008(:,2));
+    yahoo2009 = read_mixed_csv('../data_formatted/yahoo2009.csv',',');
+    yahoo2009 = char(yahoo2009(:,2)); 
+    yahoo2010 = read_mixed_csv('../data_formatted/yahoo2010.csv',',');
+    yahoo2010 = char(yahoo2010(:,2)); 
+    yahoo2011 = read_mixed_csv('../data_formatted/yahoo2011.csv',',');
+    yahoo2011 = char(yahoo2011(:,2));
+    yahoo2012 = read_mixed_csv('../data_formatted/yahoo2012.csv',',');
+    yahoo2012 = char(yahoo2012(:,2)); 
+    yahoo2013 = read_mixed_csv('../data_formatted/yahoo2013.csv',',');
+    yahoo2013 = char(yahoo2013(:,2));
     
     % Find out how many players there are
     i = 1;
@@ -129,12 +129,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2007_eoy, SortIndex] = sort(points2007_eoy);
     points2007_eoy = flipud(points2007_eoy);
-    name_cell_2007 = flipud(data2007(:,1));
+    name_cell_2007 = data2007(:,1);
     name_cell_2007 = name_cell_2007(SortIndex);
-    name2007 = char(name_cell_2007);
-    team_cell_2007 = flipud(data2007(:,2));
+    name2007 = flipud(char(name_cell_2007));
+    team_cell_2007 = data2007(:,2);
     team_cell_2007 = team_cell_2007(SortIndex);
-    team2007 = char(team_cell_2007);
+    team2007 = flipud(char(team_cell_2007));
     rush_num2007 = flipud(rush_num2007(SortIndex));
     rush_yds2007 = flipud(rush_yds2007(SortIndex));
     rush_tds2007 = flipud(rush_tds2007(SortIndex));
@@ -173,12 +173,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2008_eoy, SortIndex] = sort(points2008_eoy);
     points2008_eoy = flipud(points2008_eoy);
-    name_cell_2008 = flipud(data2008(:,1));
+    name_cell_2008 = data2008(:,1);
     name_cell_2008 = name_cell_2008(SortIndex);
-    name2008 = char(name_cell_2008);
-    team_cell_2008 = flipud(data2008(:,2));
+    name2008 = flipud(char(name_cell_2008));
+    team_cell_2008 = data2008(:,2);
     team_cell_2008 = team_cell_2008(SortIndex);
-    team2008 = char(team_cell_2008);
+    team2008 = flipud(char(team_cell_2008));
     rush_num2008 = flipud(rush_num2008(SortIndex));
     rush_yds2008 = flipud(rush_yds2008(SortIndex));
     rush_tds2008 = flipud(rush_tds2008(SortIndex));
@@ -217,12 +217,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2009_eoy, SortIndex] = sort(points2009_eoy);
     points2009_eoy = flipud(points2009_eoy);
-    name_cell_2009 = flipud(data2009(:,1));
+    name_cell_2009 = data2009(:,1);
     name_cell_2009 = name_cell_2009(SortIndex);
-    name2009 = char(name_cell_2009);
-    team_cell_2009 = flipud(data2009(:,2));
+    name2009 = flipud(char(name_cell_2009));
+    team_cell_2009 = data2009(:,2);
     team_cell_2009 = team_cell_2009(SortIndex);
-    team2009 = char(team_cell_2009);
+    team2009 = flipud(char(team_cell_2009));
     rush_num2009 = flipud(rush_num2009(SortIndex));
     rush_yds2009 = flipud(rush_yds2009(SortIndex));
     rush_tds2009 = flipud(rush_tds2009(SortIndex));
@@ -261,12 +261,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2010_eoy, SortIndex] = sort(points2010_eoy);
     points2010_eoy = flipud(points2010_eoy);
-    name_cell_2010 = flipud(data2010(:,1));
+    name_cell_2010 = data2010(:,1);
     name_cell_2010 = name_cell_2010(SortIndex);
-    name2010 = char(name_cell_2010);
-    team_cell_2010 = flipud(data2010(:,2));
+    name2010 = flipud(char(name_cell_2010));
+    team_cell_2010 = data2010(:,2);
     team_cell_2010 = team_cell_2010(SortIndex);
-    team2010 = char(team_cell_2010);
+    team2010 = flipud(char(team_cell_2010));
     rush_num2010 = flipud(rush_num2010(SortIndex));
     rush_yds2010 = flipud(rush_yds2010(SortIndex));
     rush_tds2010 = flipud(rush_tds2010(SortIndex));
@@ -305,12 +305,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2011_eoy, SortIndex] = sort(points2011_eoy);
     points2011_eoy = flipud(points2011_eoy);
-    name_cell_2011 = flipud(data2011(:,1));
+    name_cell_2011 = data2011(:,1);
     name_cell_2011 = name_cell_2011(SortIndex);
-    name2011 = char(name_cell_2011);
-    team_cell_2011 = flipud(data2011(:,2));
+    name2011 = flipud(char(name_cell_2011));
+    team_cell_2011 = data2011(:,2);
     team_cell_2011 = team_cell_2011(SortIndex);
-    team2011 = char(team_cell_2011);
+    team2011 = flipud(char(team_cell_2011));
     rush_num2011 = flipud(rush_num2011(SortIndex));
     rush_yds2011 = flipud(rush_yds2011(SortIndex));
     rush_tds2011 = flipud(rush_tds2011(SortIndex));
@@ -347,12 +347,12 @@ function [N,name,team,year,games_played,rush_num,rush_yds,rush_tds, ...
     % Now sort everything by eoy points
     [points2012_eoy, SortIndex] = sort(points2012_eoy);
     points2012_eoy = flipud(points2012_eoy);
-    name_cell_2012 = flipud(data2012(:,1));
+    name_cell_2012 = data2012(:,1);
     name_cell_2012 = name_cell_2012(SortIndex);
-    name2012 = char(name_cell_2012);
-    team_cell_2012 = flipud(data2012(:,2));
+    name2012 = flipud(char(name_cell_2012));
+    team_cell_2012 = data2012(:,2);
     team_cell_2012 = team_cell_2012(SortIndex);
-    team2012 = char(team_cell_2012);
+    team2012 = flipud(char(team_cell_2012));
     rush_num2012 = flipud(rush_num2012(SortIndex));
     rush_yds2012 = flipud(rush_yds2012(SortIndex));
     rush_tds2012 = flipud(rush_tds2012(SortIndex));
