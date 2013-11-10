@@ -39,7 +39,7 @@ clc
 M = 30;
 
 %###############################################################
-% Simple Linear Regression
+% Simple Regression
 %###############################################################
 % Predicted Points in year Y + 1 = Points in year Y
 % For any players in a year's top 30 that retire, skip them
@@ -113,13 +113,30 @@ end
 % result with the vector 1:30 to get error
 err_simple_linear_prediction2011 = sum(quantify_error(simple_linear_prediction2011,1:30));
 
+% Predict 2012 results using 2011 results
+simple_linear_prediction2012 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    name = name2011(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2012, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2012(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2012 = sum(quantify_error(simple_linear_prediction2012,1:30));
+
 %###############################################################
 % Aggregate Data
 %###############################################################
 
 err_simple_linear_prediction = [ ...
     err_simple_linear_prediction2008, err_simple_linear_prediction2009, ...
-    err_simple_linear_prediction2010, err_simple_linear_prediction2011 ];
+    err_simple_linear_prediction2010, err_simple_linear_prediction2011, ...
+    err_simple_linear_prediction2012];
 
-plot(2008:2011, err_simple_linear_prediction, 'gd', 'LineWidth',3)
+plot(2008:2012, err_simple_linear_prediction, 'gd', 'LineWidth',3)
 

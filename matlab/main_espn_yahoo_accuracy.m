@@ -36,10 +36,10 @@ clc
     receiving_catches2012,receiving_yds2012,receiving_tds2012, ...
     points2012_eoy, points2012_pg ] = read_and_format_data();
 
+% M is the number of postition rankings we will consider each year
+% This means compare ESPN's top 30 year each with Yahoo's top 30 each
+% year.
 M = 30;
-
-
-
 
 %###############################################################
 % Plot ESPN Data
