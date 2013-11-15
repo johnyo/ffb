@@ -2,6 +2,9 @@
 # Ignore 
 ######################
 
+emgm/
+gpml-matlab-v3.4-2013-11-11/
+matlab/figs/
 
 ######################
 # MATLAB Temp Files
