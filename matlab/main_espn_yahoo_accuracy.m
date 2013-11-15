@@ -393,9 +393,9 @@ ylabel('Error')
 % Save Images
 %###############################################################
 
-% saveas(espn, 'figs/espn.png','png');
-% saveas(yahoo, 'figs/yahoo.png','png');
-% saveas(rankErr, 'figs/rankErr.png','png');
+saveas(espn, 'figs/espn.png','png');
+saveas(yahoo, 'figs/yahoo.png','png');
+saveas(rankErr, 'figs/rankErr.png','png');
 
 
 
