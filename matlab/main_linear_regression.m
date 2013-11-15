@@ -43,30 +43,62 @@ M = 30;
 
 %myFig = figure('Position', [2000, 2000, 600, 350]);
 
-receiving_yds2011_delta1 = zeros(M,1);
-for i = 1:M
-    name = espn2011(i,:);
-    index2011 = strmatch(name, name2011, 'exact');
-    index2010 = strmatch(name, name2010, 'exact');
-    if( isempty(index2010) )
-        receiving_yds2011_delta1(i) = 0;
+receiving_yds2010_delta1_train = [];
+receiving_tds2010_delta1_train = [];
+points2010_eoy_train = [];
+receiving_yds2010_train = [];
+receiving_tds2010_train = [];
+
+Y_train = [];
+
+for index2010 = 1:M
+    % Get the players name from the top 30 list in 2010
+    name = espn2010(index2010,:);
+    
+    % See if they played in 2011
+    % If they didn't, no point in predicting them for our training data
+    index2011 = strmatch(name, name2010, 'exact');
+    
+    if ( isempty(index2011) )
+        
+        disp('Skipped ' + name);
+        
     else
-        receiving_yds2011_delta1(i) = receiving_yds2011(index2011) - receiving_yds2010(index2010);
+        
+        % Get the players data from 2010
+        points2010_eoy_train = [ points2010_eoy_train; points2010_eoy(index2010) ];
+        receiving_yds2010_train = [ receiving_yds2010_train; receiving_yds2010(index2010) ];
+        receiving_tds2010_train = [ receiving_tds2010_train; receiving_tds2010(index2010) ];
+
+        % Find player in the 2009 data
+        index2009 = strmatch(name, name2009, 'exact');   
+        
+        % If the player did not play in 2009, set their delta to 0
+        if( isempty(index2011) )
+            
+            receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; 0];
+            receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; 0];
+
+        % If they did play in 2009, calculate their delta
+        else
+            
+            receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; ...
+                receiving_yds2010(index2010) - receiving_yds2009(index2009) ];
+            receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; ...
+                receiving_tds2010(index2010) - receiving_tds2009(index2009) ];
+        end
+        
+        % Add their 2011 performance for Y_train
+        Y_train = [ Y_train; points2011_eoy(index2011) ];
     end
 end
 
-receiving_tds2011_delta1 = zeros(M,1);
-for i = 1:M
-    name = espn2011(i,:);
-    index2011 = strmatch(name, name2011, 'exact');
-    index2010 = strmatch(name, name2010, 'exact');
-    if( isempty(index2010) )
-        receiving_tds2011_delta1(i) = 0;
-    else
-        receiving_tds2011_delta1(i) = receiving_tds2011(index2011) - receiving_tds2010(index2010);
-    end
-end
+% Put all of my training data together into an X matrix
+X_train = [ receiving_yds2010_delta1_train, receiving_tds2010_delta1_train, ...
+    points2010_eoy_train, receiving_yds2010_train, ...
+    receiving_tds2010_train ];
 
-X_train = [receiving_yds2011(1:M), receiving_tds2011(1:M), receiving_yds2011_delta1, receiving_tds2011_delta1];
-Y_train = points2011_eoy;
+B = ( (X_train') * X_train)^(-1) * (X_train') * Y_train;
+
+
 
