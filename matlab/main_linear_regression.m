@@ -44,67 +44,80 @@ M = 30;
 %myFig = figure('Position', [2000, 2000, 600, 350]);
 
 %############################################################
-% Train
+% Train 
 %############################################################
+% Train with X as all data up to 2010 + 2011 preseason rankings, 
+% and then use Y as the 2011 end of year results
 
 receiving_yds2010_delta1_train = [];
 receiving_tds2010_delta1_train = [];
 points2010_eoy_train = [];
 receiving_yds2010_train = [];
 receiving_tds2010_train = [];
+espn2011_train = [];
+yahoo2011_train = [];
 
 Y_train = [];
 
-for index2010 = 1:M
-    % Get the players name from the top 30 list in 2010
-    name = espn2010(index2010,:);
+for index2011 = 1:M
     
-    % See if they played in 2011
-    % If they didn't, no point in predicting them for our training data
-    index2011 = strmatch(name, name2010, 'exact');
+    % Get the players name from the top 30 ESPN preseason list for 2011
+    name = espn2011(index2011,:);
     
-    if ( isempty(index2011) )
+    % only predict players that played in 2010 as well
+    index2010 = strmatch(name, name2010, 'exact');
         
-        disp('This Player Is Ineligble for Regression and Was Skipped:');
+    if( isempty(index2010) )
+        
+        disp('Skipped this player in TRAINING because he didnt play in 2010')
         name
         
     else
-        
-        % Get the players data from 2010
+
+        % Save the players' preseason espn ranking
+        espn2011_train = [ espn2011_train; index2011 ];
+        % Save the player's preseason Yahoo ranking
+        yahoo2011_train = [ yahoo2011_train; strmatch(name, yahoo2011, 'exact') ];
+
+        % Get the players data from the 2010 season
         points2010_eoy_train = [ points2010_eoy_train; points2010_eoy(index2010) ];
         receiving_yds2010_train = [ receiving_yds2010_train; receiving_yds2010(index2010) ];
         receiving_tds2010_train = [ receiving_tds2010_train; receiving_tds2010(index2010) ];
-        
+
         % Find player in the 2009 data
         index2009 = strmatch(name, name2009, 'exact');   
-        
+
         % If the player did not play in 2009, set their delta to 0
-        if( isempty(index2011) )
-            
+        if( isempty(index2009) )
+
             receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; 0];
             receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; 0];
 
         % If they did play in 2009, calculate their delta
         else
-            
+
             receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; ...
                 (receiving_yds2010(index2010) - receiving_yds2009(index2009)) ];
             receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; ...
                 (receiving_tds2010(index2010) - receiving_tds2009(index2009)) ];
         end
-        
+
         % Add their 2011 performance for Y_train
         Y_train = [ Y_train; points2011_eoy(index2011) ];
+        
     end
+    
 end
 
 % Put all of my training data together into an X matrix
 X_train = [ receiving_yds2010_delta1_train, receiving_tds2010_delta1_train, ...
     points2010_eoy_train, receiving_yds2010_train, ...
-    receiving_tds2010_train ];
+    receiving_tds2010_train, ...
+    espn2011_train, yahoo2011_train ];
 
 B = ( (X_train') * X_train)^(-1) * (X_train') * Y_train;
 
+B
 
 %############################################################
 % Test - Predict 2012 Results
@@ -115,59 +128,87 @@ receiving_tds2011_delta1_test = [];
 points2011_eoy_test = [];
 receiving_yds2011_test = [];
 receiving_tds2011_test = [];
+names_to_be_predicted = [];
+espn2012_test = [];
+yahoo2012_test = [];
 
 Y_ground_truth_2012 = [];
 
-for index2011 = 1:M
-    % Get the players name from the top 30 list in 2011
-    name = espn2011(index2011,:);
+for index2012 = 1:M
+ 
+    % Get the players name from the top 30 ESPN preseason list for 2012
+    name = espn2012(index2012,:);
     
-    % See if they played in 2012
-    % If they didn't, no point in predicting them for our test data
-    index2012 = strmatch(name, name2012, 'exact');
-    if ( isempty(index2012) )
+    % only predict players that played in 2011 as well
+    index2011 = strmatch(name, name2011, 'exact');
         
-        disp('This Player Is Ineligble for Regression and Was Skipped:');
+    if( isempty(index2011) )
+        
+        disp('Skipped this player in TESTING because he didnt play in 2011')
         name
         
     else
-        
-        % Get the players data from 2011
+
+        % Save the players' preseason espn ranking
+        espn2012_test = [ espn2012_test; index2012 ];
+        % Save the player's preseason Yahoo ranking
+        yahoo2012_test = [ yahoo2012_test; strmatch(name, yahoo2012, 'exact') ];
+          
+        % Get the players data from the 2011 season
         points2011_eoy_test = [ points2011_eoy_test; points2011_eoy(index2011) ];
         receiving_yds2011_test = [ receiving_yds2011_test; receiving_yds2011(index2011) ];
         receiving_tds2011_test = [ receiving_tds2011_test; receiving_tds2011(index2011) ];
-        
+
         % Find player in the 2010 data
         index2010 = strmatch(name, name2010, 'exact');   
 
         % If the player did not play in 2010, set their delta to 0
         if( isempty(index2010) )
-            
+
             receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; 0];
             receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; 0];
 
         % If they did play in 2010, calculate their delta
         else
-            
+
             receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; ...
                 (receiving_yds2011(index2011) - receiving_yds2010(index2010)) ];
             receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; ...
                 (receiving_tds2011(index2011) - receiving_tds2010(index2010)) ];
         end
-        
-        % Add their 2011 performance for Y_test
-        Y_ground_truth_2012 = [ Y_ground_truth_2012; points2011_eoy(index2011) ];
+
+        % Add their 2012 performance for our ground truth
+        Y_ground_truth_2012 = [ Y_ground_truth_2012; points2012_eoy(index2012) ];
+
+        % save the name 
+        names_to_be_predicted = [names_to_be_predicted; name];
+
     end
+    
 end
 
 X_test = [ receiving_yds2011_delta1_test, receiving_tds2011_delta1_test, ...
     points2011_eoy_test, receiving_yds2011_test, ...
-    receiving_tds2011_test ];
+    receiving_tds2011_test, ...
+    espn2012_test, yahoo2012_test ];
 
+% Predict 
 Y_test = X_test * B;
 
-Y_test
+names_to_be_predicted;
 
-Y_ground_truth_2012
+[ Y_test, Y_ground_truth_2012 ];
+
+%############################################################
+% Now rank players based on fantasy point predictions
+%############################################################
+
+[sorted_Y_test, sortIndices] = sort(Y_test);
+sorted_Y_test = flipud(sorted_Y_test);
+sortIndices = flipud(sortIndices);
+
+predicted_rankings_2012 = names_to_be_predicted(sortIndices,:);
+
+espn2012(1:M,:);
 
 
