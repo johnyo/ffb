@@ -334,6 +334,9 @@ err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30))
 err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30))
 err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30))
 
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
+err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30))
+err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30))
 
 
 
