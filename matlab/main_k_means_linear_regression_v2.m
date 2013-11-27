@@ -41,6 +41,20 @@ clc
 % year.
 M = 29;
 
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON CATCHES
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR CATCHES')
+disp('############################################')
+
 catches2011_espn2012 = [];
 
 for i = 1:M
@@ -64,9 +78,6 @@ for(i = 1:M)
         namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
     end
 end
-
-namesToRank_k1
-namesToRank_k2
 
 [sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
     function_lin_reg( namesToRank_k1, namesToRank_k1 );
@@ -103,7 +114,7 @@ for i = 1:M
     end
 end
 
-lin_reg_k_means_out
+% lin_reg_k_means_out
 
 %#############################################################
 % Get actual results
@@ -119,7 +130,7 @@ for i = 1:M
     
 end
 
-actual_results
+% actual_results
 
 %############################################################
 % Quantify how good our rankings were
@@ -127,4 +138,405 @@ actual_results
 
 err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
 err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON FP
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR FP')
+disp('############################################')
+
+fp_eoy_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    fp_eoy_2011_espn2012 = [fp_eoy_2011_espn2012; points2011_eoy(index)];
+   
+end
+
+kvector = kmeans(fp_eoy_2011_espn2012,2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON TDS
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR TDS')
+disp('############################################')
+
+tds_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    tds_2011_espn2012 = [tds_2011_espn2012; receiving_tds2011(index)];
+   
+end
+
+kvector = kmeans(tds_2011_espn2012,2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON YDS
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR RECEIVING YDS')
+disp('############################################')
+
+yds_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    yds_2011_espn2012 = [yds_2011_espn2012; receiving_yds2011(index)];
+   
+end
+
+kvector = kmeans(yds_2011_espn2012,2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON TARGETS
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR RECEIVING TARGETS')
+disp('############################################')
+
+targets_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    targets_2011_espn2012 = [targets_2011_espn2012; receiving_targets2011(index)];
+   
+end
+
+kvector = kmeans(targets_2011_espn2012,2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+
+
+
+
+
+
+
 
