@@ -143,14 +143,14 @@ err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
 %###############################################################
 %###############################################################
 %###############################################################
-% K MEANS ON FP
+% K MEANS ON FP x2
 %###############################################################
 %###############################################################
 %###############################################################
 %###############################################################
 
 disp('############################################')
-disp('K MEANS ON PREVIOUS YEAR FP')
+disp('K MEANS ON PREVIOUS YEAR FP x2')
 disp('############################################')
 
 fp_eoy_2011_espn2012 = [];
@@ -213,6 +213,150 @@ for i = 1:M
 end
 
 % lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% K MEANS ON FP x3
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('K MEANS ON PREVIOUS YEAR FP x3')
+disp('############################################')
+
+fp_eoy_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    fp_eoy_2011_espn2012 = [fp_eoy_2011_espn2012; points2011_eoy(index)];
+   
+end
+
+kvector = kmeans(fp_eoy_2011_espn2012,3);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+namesToRank_k3 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    elseif( kvector(i) == 3 )
+        namesToRank_k3 = [namesToRank_k3; espn2012(i,:)];
+    end
+
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+[sorted_Y_test_k3, names_to_be_predicted_k3, predicted_lin_reg_2012_k3, B_k3 ] = ...
+    function_lin_reg( namesToRank_k3, namesToRank_k3 );
+
+%############################################################
+% Merge three lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) && isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k3(1,:) ];
+        predicted_lin_reg_2012_k3(1,:) = [];
+        sorted_Y_test_k3(1) = [];
+    elseif( isempty(sorted_Y_test_k1) && isempty(sorted_Y_test_k3) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];  
+    elseif( isempty(sorted_Y_test_k2) && isempty(sorted_Y_test_k3) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    elseif( isempty(sorted_Y_test_k1) || isempty(sorted_Y_test_k2) || isempty(sorted_Y_test_k3) )
+        if( isempty(sorted_Y_test_k1) )
+            if( sorted_Y_test_k2(1) > sorted_Y_test_k3(1) )
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+                predicted_lin_reg_2012_k2(1,:) = [];
+                sorted_Y_test_k2(1) = [];
+            else
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k3(1,:) ];
+                predicted_lin_reg_2012_k3(1,:) = [];
+                sorted_Y_test_k3(1) = [];
+            end
+        elseif( isempty(sorted_Y_test_k2) )
+            if( sorted_Y_test_k1(1) > sorted_Y_test_k3(1) )
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+                predicted_lin_reg_2012_k1(1,:) = [];
+                sorted_Y_test_k1(1) = [];
+            else
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k3(1,:) ];
+                predicted_lin_reg_2012_k3(1,:) = [];
+                sorted_Y_test_k3(1) = [];
+            end
+        elseif( isempty(sorted_Y_test_k3) )
+            if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+                predicted_lin_reg_2012_k1(1,:) = [];
+                sorted_Y_test_k1(1) = [];
+            else
+                lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+                predicted_lin_reg_2012_k2(1,:) = [];
+                sorted_Y_test_k2(1) = [];
+            end
+        end  
+    else
+        [max_val, max_val_index] = max( [ sorted_Y_test_k1(1), sorted_Y_test_k2(1), sorted_Y_test_k3(1) ] );
+        if(max_val_index == 1)
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        elseif(max_val_index == 2)
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k3(1,:) ];
+            predicted_lin_reg_2012_k3(1,:) = [];
+            sorted_Y_test_k3(1) = [];
+        end
+    end
+end
 
 %#############################################################
 % Get actual results
