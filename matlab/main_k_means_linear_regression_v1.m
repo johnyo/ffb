@@ -39,10 +39,81 @@ clc
 % M is the number of postition rankings we will consider each year
 % This means compare ESPN's top 30 year each with Yahoo's top 30 each
 % year.
-M = 30;
+M = 29;
 
-namesToRank2011 = espn2011(1:M,:);
-namesToRank2012 = espn2012(1:M,:);
+catches2011_espn2012 = [];
 
-[Y_test, predicted_lin_reg_2012, B ] = function_lin_reg(namesToRank2011,namesToRank2012)
+for i = 1:M
 
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    catches2011_espn2012 = [catches2011_espn2012; receiving_catches2011(index)];
+   
+end
+
+kvector = kmeans(catches2011_espn2012,2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+namesToRank_k1
+namesToRank_k2
+
+[Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 )
+
+
+
+
+
+
+
+
+
+
+
+% %############################################################
+% % Quantify how good our rankings were
+% %############################################################
+% 
+% [sorted_Y_test, sortIndices] = sort(Y_test);
+% sorted_Y_test = flipud(sorted_Y_test);
+% sortIndices = flipud(sortIndices);
+% 
+% predicted_lin_reg_2012 = names_to_be_predicted(sortIndices,:);
+% 
+% predicted_espn2012 = espn2012(1:M,:);
+% 
+% predicted_yahoo2012 = yahoo2012(1:M,:);
+% 
+% actual = name2012(1:M,:);
+% 
+% len = size(predicted_lin_reg_2012,1);
+% rank_lin_reg_2012 = zeros(len,1);
+% rank_espn_2012 = zeros(len,1);
+% rank_yahoo_2012 = zeros(len,1);
+% 
+% for j = 1:len
+% 
+%     rank_lin_reg_2012(j) = strmatch(predicted_lin_reg_2012(j,:), name2012, 'exact');
+%     rank_espn_2012(j) = strmatch(predicted_espn2012(j,:), name2012, 'exact');
+%     rank_yahoo_2012(j) = strmatch(predicted_yahoo2012(j,:), name2012, 'exact');
+% 
+% end
+% 
+% err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30))
+% err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30));
+% err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30));
+% 
+% err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
+% err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30));
+% err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30));
