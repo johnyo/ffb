@@ -37,9 +37,10 @@ clc
     points2012_eoy, points2012_pg ] = read_and_format_data();
 
 
-samples = 2:24;
+samples = 2:29;
 
 total_lin_reg_rmse = [];
+total_lin_reg_dcg = [];
 total_espn_rmse = [];
 total_yahoo_rmse = [];
 
@@ -83,19 +84,33 @@ for i = 1:length(samples)
         array_yahoo(i) = points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
 
     end
+    
+    rank_lin_reg_2012 = zeros(L,1);
+    for i = 1:L
+        rank_lin_reg_2012(i) = strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact');
+    end
 
     err_rmse_lin_reg_2012 = quantify_error_rmse(array_lin_reg,array_actual);
     err_rmse_espn_2012 = quantify_error_rmse(array_espn,array_actual);
     err_rmse_yahoo_2012 = quantify_error_rmse(array_yahoo,array_actual);
-    
+    err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30));
+
     total_lin_reg_rmse = [total_lin_reg_rmse; err_rmse_lin_reg_2012];
+    total_lin_reg_dcg = [total_lin_reg_dcg; err_dcg_lin_reg_2012];
     total_espn_rmse = [total_espn_rmse; err_rmse_espn_2012];
     total_yahoo_rmse = [total_yahoo_rmse; err_rmse_yahoo_2012];
     
 end
 
 figure
+subplot(2,1,1)
 plot(total_lin_reg_rmse, 'LineWidth',3)
 xlabel('Number of Players Used For Training')
-ylabel('RMSE (Total Fantasy Points in 2012)')
-title('Learning Curve for Linear Regression Algorithm')
+ylabel('RMSE (2012 Points)')
+title('RMSE Learning Curve for Linear Regression Algorithm')
+
+subplot(2,1,2)
+plot(total_lin_reg_dcg, 'LineWidth',3)
+xlabel('Number of Players Used For Training')
+ylabel('Discounted Cumulative Gain (2012 Points)')
+title('Discounted Cumulative Gain vs. Training Set Size')
