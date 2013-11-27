@@ -387,17 +387,31 @@ err_rmse_yahoo_2012 = quantify_error_rmse(array_yahoo,array_actual)
 % Plots
 %############################################################
 
-figure
+% figure
+% 
+% X = [ array_actual, array_lin_reg, array_espn, array_yahoo ];
+% bar(X)
+% xlim([0,30])
+% legend('Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
+% xlabel('Player Rank')
+% ylabel('End of Year Fantasy Points')
+% title('Top 30 NFL Wide Receivers For Each method')
 
-X = [ array_actual, array_lin_reg, array_espn, array_yahoo ];
-bar(X)
+figure
+hold on
+plot(array_actual, 'ro', 'LineWidth', 2)
+h1 = plot(array_actual, 'r', 'LineWidth', 2)
+plot(array_lin_reg, 'bo', 'LineWidth', 2)
+h2 = plot(array_lin_reg, 'b', 'LineWidth', 2)
+plot(array_espn, 'ko', 'LineWidth', 2 )
+h3= plot(array_espn, 'k', 'LineWidth', 2 )
+plot(array_yahoo, 'co', 'LineWidth', 2 )
+h4 = plot(array_yahoo, 'c', 'LineWidth', 2 )
 xlim([0,30])
-legend('Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
+legend([h1 h2 h3 h4], 'Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
 xlabel('Player Rank')
 ylabel('End of Year Fantasy Points')
-title('Top 30 NFL Wide Receivers For Each method')
-
-
+title('Comparison of Top 30 Wide Receiver Projections')
 
 
 
