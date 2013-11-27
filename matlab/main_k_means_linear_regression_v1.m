@@ -68,52 +68,74 @@ end
 namesToRank_k1
 namesToRank_k2
 
-[Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = ...
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
     function_lin_reg( namesToRank_k1, namesToRank_k1 )
 
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 )
 
+%############################################################
+% Merge two lists together
+%############################################################
 
+lin_reg_k_means_out = [];
 
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( predicted_lin_reg_2012_k1(1) > predicted_lin_reg_2012_k2 )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
 
+%############################################################
+% Quantify how good our rankings were
+%############################################################
 
+[sorted_Y_test, sortIndices] = sort(Y_test);
+sorted_Y_test = flipud(sorted_Y_test);
+sortIndices = flipud(sortIndices);
 
+predicted_lin_reg_2012 = names_to_be_predicted(sortIndices,:);
 
+predicted_espn2012 = espn2012(1:M,:);
 
+predicted_yahoo2012 = yahoo2012(1:M,:);
 
+actual = name2012(1:M,:);
 
-% %############################################################
-% % Quantify how good our rankings were
-% %############################################################
-% 
-% [sorted_Y_test, sortIndices] = sort(Y_test);
-% sorted_Y_test = flipud(sorted_Y_test);
-% sortIndices = flipud(sortIndices);
-% 
-% predicted_lin_reg_2012 = names_to_be_predicted(sortIndices,:);
-% 
-% predicted_espn2012 = espn2012(1:M,:);
-% 
-% predicted_yahoo2012 = yahoo2012(1:M,:);
-% 
-% actual = name2012(1:M,:);
-% 
-% len = size(predicted_lin_reg_2012,1);
-% rank_lin_reg_2012 = zeros(len,1);
-% rank_espn_2012 = zeros(len,1);
-% rank_yahoo_2012 = zeros(len,1);
-% 
-% for j = 1:len
-% 
-%     rank_lin_reg_2012(j) = strmatch(predicted_lin_reg_2012(j,:), name2012, 'exact');
-%     rank_espn_2012(j) = strmatch(predicted_espn2012(j,:), name2012, 'exact');
-%     rank_yahoo_2012(j) = strmatch(predicted_yahoo2012(j,:), name2012, 'exact');
-% 
-% end
-% 
-% err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30))
-% err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30));
-% err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30));
-% 
-% err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
-% err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30));
-% err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30));
+len = size(predicted_lin_reg_2012,1);
+rank_lin_reg_2012 = zeros(len,1);
+rank_espn_2012 = zeros(len,1);
+rank_yahoo_2012 = zeros(len,1);
+
+for j = 1:len
+
+    rank_lin_reg_2012(j) = strmatch(predicted_lin_reg_2012(j,:), name2012, 'exact');
+    rank_espn_2012(j) = strmatch(predicted_espn2012(j,:), name2012, 'exact');
+    rank_yahoo_2012(j) = strmatch(predicted_yahoo2012(j,:), name2012, 'exact');
+
+end
+
+err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30))
+err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30));
+err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30));
+
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
+err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30));
+err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30));

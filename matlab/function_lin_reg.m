@@ -1,4 +1,4 @@
-function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_lin_reg(namesToRank2011,namesToRank2012)
+function [sorted_Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_lin_reg(namesToRank2011,namesToRank2012)
 
     %###############################################################
     % Import and format data
@@ -77,8 +77,11 @@ function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_
             % Save the players' preseason espn ranking
             espn2011_train = [ espn2011_train; index2011 ];
             % Save the player's preseason Yahoo ranking
-            yahoo2011_train = [ yahoo2011_train; strmatch(name, yahoo2011, 'exact') ];
-
+%             yahoo2011_train = [ yahoo2011_train; strmatch(name, yahoo2011, 'exact') ];
+% 
+%             name
+%             yahoo2011_train
+            
             % Get the players data from the 2010 season
             points2010_eoy_train = [ points2010_eoy_train; points2010_eoy(index2010) ];
             receiving_yds2010_train = [ receiving_yds2010_train; receiving_yds2010(index2010) ];
@@ -160,8 +163,6 @@ function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_
 %         espn2011_train, ...
 %         yahoo2011_train ...
 %         ];
-
-
     
     X_train = [ ...
         points2010_eoy_train, ...
@@ -170,7 +171,6 @@ function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_
         receiving_yds2010_delta1_train, ...
         receiving_tds2010_delta1_train, ...
         espn2011_train, ...
-        yahoo2011_train ...
         ];
 
     B = ( (X_train') * X_train)^(-1) * (X_train') * Y_train;
@@ -214,7 +214,7 @@ function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_
             % Save the players' preseason espn ranking
             espn2012_test = [ espn2012_test; index2012 ];
             % Save the player's preseason Yahoo ranking
-            yahoo2012_test = [ yahoo2012_test; strmatch(name, yahoo2012, 'exact') ];
+%             yahoo2012_test = [ yahoo2012_test; strmatch(name, yahoo2012, 'exact') ];
             
             % Get the players data from the 2011 season
             points2011_eoy_test = [ points2011_eoy_test; points2011_eoy(index2011) ];
@@ -307,7 +307,6 @@ function [Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = function_
         receiving_yds2011_delta1_test, ... 
         receiving_tds2011_delta1_test, ...
         espn2012_test, ...
-        yahoo2012_test ...
         ];
     
     % Predict 
