@@ -37,11 +37,11 @@ clc
     points2012_eoy, points2012_pg ] = read_and_format_data();
 
 
-samples = 5:10;
+samples = 2:24;
 
-total_lin_reg_rmse = zeros(length(samples),1);
-total_espn_rmse = zeros(length(samples),1);
-total_yahoo_rmse = zeros(length(samples),1);
+total_lin_reg_rmse = [];
+total_espn_rmse = [];
+total_yahoo_rmse = [];
 
 for i = 1:length(samples)
     
@@ -88,8 +88,14 @@ for i = 1:length(samples)
     err_rmse_espn_2012 = quantify_error_rmse(array_espn,array_actual);
     err_rmse_yahoo_2012 = quantify_error_rmse(array_yahoo,array_actual);
     
-    total_lin_reg_rmse(i) = err_rmse_lin_reg_2012;
-    total_espn_rmse(i) = err_rmse_espn_2012;
-    total_yahoo_rmse(i) = err_rmse_yahoo_2012;
+    total_lin_reg_rmse = [total_lin_reg_rmse; err_rmse_lin_reg_2012];
+    total_espn_rmse = [total_espn_rmse; err_rmse_espn_2012];
+    total_yahoo_rmse = [total_yahoo_rmse; err_rmse_yahoo_2012];
+    
 end
 
+figure
+plot(total_lin_reg_rmse, 'LineWidth',3)
+xlabel('Number of Players Used For Training')
+ylabel('RMSE (Total Fantasy Points in 2012)')
+title('Learning Curve for Linear Regression Algorithm')
