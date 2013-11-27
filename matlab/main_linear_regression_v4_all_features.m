@@ -2,6 +2,8 @@ close all
 clear all
 clc
 
+format short
+
 %###############################################################
 % Import and format data
 %###############################################################
@@ -345,6 +347,57 @@ err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30))
 err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
 err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30))
 err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30))
+
+actual_max_pts = 0;
+lin_reg_pts = 0;
+espn_pts = 0;
+yahoo_pts = 0;
+
+array_actual = zeros(len,1);
+array_lin_reg = zeros(len,1);
+array_espn = zeros(len,1);
+array_yahoo = zeros(len,1);
+
+for i = 1:len
+    
+    actual_max_pts = actual_max_pts + points2012_eoy( i );
+    array_actual(i) = points2012_eoy( i );
+    
+    lin_reg_pts = lin_reg_pts + points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
+    array_lin_reg(i) = points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
+    
+    espn_pts = espn_pts + points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
+    array_espn(i) = points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
+    
+    yahoo_pts = yahoo_pts + points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
+    array_yahoo(i) = points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
+    
+end
+
+actual_max_pts
+lin_reg_pts
+espn_pts
+yahoo_pts
+
+err_rmse_lin_reg_2012 = quantify_error_rmse(array_lin_reg,array_actual)
+err_rmse_espn_2012 = quantify_error_rmse(array_espn,array_actual)
+err_rmse_yahoo_2012 = quantify_error_rmse(array_yahoo,array_actual)
+
+%############################################################
+% Plots
+%############################################################
+
+figure
+
+X = [ array_actual, array_lin_reg, array_espn, array_yahoo ];
+bar(X)
+xlim([0,30])
+legend('Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
+xlabel('Player Rank')
+ylabel('End of Year Fantasy Points')
+title('Top 30 NFL Wide Receivers For Each method')
+
+
 
 
 
