@@ -45,6 +45,288 @@ M = 29;
 %###############################################################
 %###############################################################
 %###############################################################
+% 3D K MEANS ON CATCHES + FP + TDS
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('3D K MEANS ON PREVIOUS YEAR CATCHES + FP + TDS')
+disp('############################################')
+
+catches2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    catches2011_espn2012 = [catches2011_espn2012; receiving_catches2011(index)];
+   
+end
+
+fp_eoy_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    fp_eoy_2011_espn2012 = [fp_eoy_2011_espn2012; points2011_eoy(index)];
+   
+end
+
+tds_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    tds_2011_espn2012 = [tds_2011_espn2012; receiving_tds2011(index)];
+   
+end
+
+kvector = kmeans([catches2011_espn2012,fp_eoy_2011_espn2012,tds_2011_espn2012],2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+% 2D K MEANS ON CATCHES + FP
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
+
+disp('############################################')
+disp('2D K MEANS ON PREVIOUS YEAR CATCHES + FP')
+disp('############################################')
+
+catches2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    catches2011_espn2012 = [catches2011_espn2012; receiving_catches2011(index)];
+   
+end
+
+fp_eoy_2011_espn2012 = [];
+
+for i = 1:M
+
+    temp_nm = espn2012(i,:);
+    index = strmatch(temp_nm, name2011, 'exact');
+    fp_eoy_2011_espn2012 = [fp_eoy_2011_espn2012; points2011_eoy(index)];
+   
+end
+
+kvector = kmeans([catches2011_espn2012,fp_eoy_2011_espn2012],2);
+
+namesToRank_k1 = [];
+namesToRank_k2 = [];
+
+for(i = 1:M)
+     
+    if( kvector(i) == 1 )
+        namesToRank_k1 = [namesToRank_k1; espn2012(i,:)];
+    elseif( kvector(i) == 2 )
+        namesToRank_k2 = [namesToRank_k2; espn2012(i,:)];
+    end
+end
+
+[sorted_Y_test_k1, names_to_be_predicted_k1, predicted_lin_reg_2012_k1, B_k1 ] = ...
+    function_lin_reg( namesToRank_k1, namesToRank_k1 );
+
+[sorted_Y_test_k2, names_to_be_predicted_k2, predicted_lin_reg_2012_k2, B_k2 ] = ...
+    function_lin_reg( namesToRank_k2, namesToRank_k2 );
+
+%############################################################
+% Merge two lists together
+%############################################################
+
+lin_reg_k_means_out = [];
+
+for i = 1:M
+    
+    if( isempty(sorted_Y_test_k1) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+        predicted_lin_reg_2012_k2(1,:) = [];
+        sorted_Y_test_k2(1) = [];
+    elseif( isempty(sorted_Y_test_k2) )
+        lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+        predicted_lin_reg_2012_k1(1,:) = [];
+        sorted_Y_test_k1(1) = [];
+    else
+        if( sorted_Y_test_k1(1) > sorted_Y_test_k2(1) )
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k1(1,:) ];
+            predicted_lin_reg_2012_k1(1,:) = [];
+            sorted_Y_test_k1(1) = [];
+        else
+            lin_reg_k_means_out = [lin_reg_k_means_out; predicted_lin_reg_2012_k2(1,:) ];
+            predicted_lin_reg_2012_k2(1,:) = [];
+            sorted_Y_test_k2(1) = [];
+        end
+    end
+end
+
+% lin_reg_k_means_out
+
+%#############################################################
+% Get actual results
+%############################################################
+
+% players actual results
+actual_results = [];
+
+for i = 1:M
+    
+    index = strmatch(lin_reg_k_means_out(i,:), name2012, 'exact');
+    actual_results = [actual_results; index];
+    
+end
+
+% actual_results
+
+%############################################################
+% Quantify how good our rankings were
+%############################################################
+
+err_lin_reg_2012 = sum(quantify_error(actual_results,1:30))
+err_dcg_lin_reg_2012 = sum(quantify_error_dcg(actual_results,1:30))
+
+% figure
+% hold on
+% for i = 1:M
+%     if ( kvector(i) == 1 )
+%         h1 = plot( catches2011_espn2012(i), fp_eoy_2011_espn2012(i), 'ro', 'LineWidth',2 );
+%     else
+%         h2 = plot( catches2011_espn2012(i), fp_eoy_2011_espn2012(i), 'bo', 'LineWidth',2 );
+%     end
+%     i
+%     espn2012(i,:)
+%     
+%     if ( i == 27 )
+%         text(catches2011_espn2012(i) -25 , fp_eoy_2011_espn2012(i)  , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 28 )
+%         text(catches2011_espn2012(i) -8 , fp_eoy_2011_espn2012(i) -7 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 29 )
+%         text(catches2011_espn2012(i) -22 , fp_eoy_2011_espn2012(i) , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 17 )
+%         text(catches2011_espn2012(i) , fp_eoy_2011_espn2012(i) -7 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 21 )
+%         text(catches2011_espn2012(i) + 3, fp_eoy_2011_espn2012(i) -4 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 22 )
+%         text(catches2011_espn2012(i) + 3 , fp_eoy_2011_espn2012(i) -4 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 18 )
+%         text(catches2011_espn2012(i) -24 , fp_eoy_2011_espn2012(i)  , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 2 )
+%         text(catches2011_espn2012(i) + 1 , fp_eoy_2011_espn2012(i) +5 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 14 )
+%         text(catches2011_espn2012(i) - 27 , fp_eoy_2011_espn2012(i) , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 19 )
+%         text(catches2011_espn2012(i) + 2 , fp_eoy_2011_espn2012(i) +6 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 7 )
+%         text(catches2011_espn2012(i) - 19 , fp_eoy_2011_espn2012(i) , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 11 )
+%         text(catches2011_espn2012(i) - 19 , fp_eoy_2011_espn2012(i) , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 9 )
+%         text(catches2011_espn2012(i) - 6, fp_eoy_2011_espn2012(i) + 7 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 15 )
+%         text(catches2011_espn2012(i) - 7, fp_eoy_2011_espn2012(i) - 7 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 5 )
+%         text(catches2011_espn2012(i) + 2, fp_eoy_2011_espn2012(i) + 3 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 20 )
+%         text(catches2011_espn2012(i) + 3, fp_eoy_2011_espn2012(i) - 1 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 16 )
+%         text(catches2011_espn2012(i) + 3, fp_eoy_2011_espn2012(i) + 3 , espn2012(i,:),'FontSize',12)
+%     elseif ( i == 8 )
+%         text(catches2011_espn2012(i) - 14, fp_eoy_2011_espn2012(i) + 6 , espn2012(i,:),'FontSize',10)
+%     else
+%         text(catches2011_espn2012(i) + 3, fp_eoy_2011_espn2012(i) + 0, espn2012(i,:),'FontSize',12)
+%     end
+% end
+% xlabel('Catches in 2011')
+% ylabel('Fantasy Points in 2011')
+% title('K-Means Clustering on Catches + Fantasy Poitns')
+% legend([h1 h2], 'K=1','K=2')
+
+%###############################################################
+%###############################################################
+%###############################################################
+%###############################################################
 % K MEANS ON CATCHES
 %###############################################################
 %###############################################################
