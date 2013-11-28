@@ -41,169 +41,127 @@ clc
 % year.
 M = 30;
 
-%###############################################################
-% Plot ESPN Data
-%###############################################################
 
-% espn = figure('Position', [2000, 2000, 600, 350]);
-% 
-% subplot(3,2,1)
-% hold on
-% for i = 1:M
-%    name = espn2012(i,:);
-%    index = strmatch(name, name2012, 'exact');
-%    plot(i,points2012_eoy(index),'ro')
-%    plot(i,points2012_eoy(i),'b+')
-% end
-% title('2012 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,2)
-% hold on
-% for i = 1:M
-%    name = espn2011(i,:);
-%    index = strmatch(name, name2011, 'exact');
-%    plot(i,points2011_eoy(index),'ro')
-%    plot(i,points2011_eoy(i),'b+')
-% end
-% title('2011 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,3)
-% hold on
-% for i = 1:M
-%    name = espn2010(i,:);
-%    index = strmatch(name, name2010, 'exact');
-%    plot(i,points2010_eoy(index),'ro')
-%    plot(i,points2010_eoy(i),'b+')
-% end
-% title('2010 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,4)
-% hold on
-% for i = 1:M
-%    name = espn2009(i,:);
-%    index = strmatch(name, name2009, 'exact');
-%    plot(i,points2009_eoy(index),'ro')
-%    plot(i,points2009_eoy(i),'b+')
-% end
-% title('2009 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,5)
-% hold on
-% for i = 1:M
-%    name = espn2008(i,:);
-%    index = strmatch(name, name2008, 'exact');
-%    plot(i,points2008_eoy(index),'ro')
-%    plot(i,points2008_eoy(i),'b+')
-% end
-% title('2008 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,6)
-% hold on
-% for i = 1:M
-%    name = espn2007(i,:);
-%    index = strmatch(name, name2007, 'exact');
-%    plot(i,points2007_eoy(index),'ro')
-%    plot(i,points2007_eoy(i),'b+')
-% end
-% title('2007 Top 30: ESPN Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% leg_espn = legend('ESPN','Actual');
-% newPosition = [0.45 0.0 0.15 0.08];
-% newUnits = 'normalized';
-% set(leg_espn,'Position', newPosition,'Units', newUnits);
+
+
+
+
+
+
+
+
 
 %###############################################################
-% Plot Yahoo Data
+% Simple Regression
+%###############################################################
+% Predicted Points in year Y + 1 = Points in year Y
+% For any players in a year's top 30 that retire, skip them
+
+% Predict 2008 results using 2007 results
+simple_linear_prediction2008 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    name = name2007(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2008, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2008(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2008 = sum(quantify_error(simple_linear_prediction2008,1:30));
+
+% Predict 2009 results using 2008 results
+simple_linear_prediction2009 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    name = name2008(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2009, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2009(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2009 = sum(quantify_error(simple_linear_prediction2009,1:30));
+
+% Predict 2010 results using 2009 results
+simple_linear_prediction2010 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    name = name2009(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2010, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2010(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2010 = sum(quantify_error(simple_linear_prediction2010,1:30));
+
+% Predict 2011 results using 2010 results
+simple_linear_prediction2011 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    % Note T Owens didn't play in 2015 so skip him with this if statement
+    if ( i < 15 )
+        name = name2010(i,:);
+    else
+        name = name2010(i+1,:);
+    end
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2011, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2011(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2011 = sum(quantify_error(simple_linear_prediction2011,1:30));
+
+% Predict 2012 results using 2011 results
+simple_linear_prediction2012 = zeros(M,1);
+for i = 1:M
+    % Go through previous year's top M players in order
+    name = name2011(i,:);
+    % Find their rank at the end of the year
+    % In the data from read_and_format_data which
+    % Is sorted by year-end-performance
+    name_eof_place = strmatch(name, name2012, 'exact');
+    % Add the result to our output array
+    simple_linear_prediction2012(i) = name_eof_place;
+end
+% The current year data is already sorted, so compare our
+% result with the vector 1:30 to get error
+err_simple_linear_prediction2012 = sum(quantify_error(simple_linear_prediction2012,1:30));
+
+%###############################################################
+% Aggregate Data
 %###############################################################
 
-% yahoo = figure('Position', [2000, 2000, 600, 350]);
-% 
-% subplot(3,2,1)
-% hold on
-% for i = 1:M
-%    name = yahoo2012(i,:);
-%    index = strmatch(name, name2012, 'exact');
-%    plot(i,points2012_eoy(index),'ro')
-%    plot(i,points2012_eoy(i),'b+')
-% end
-% title('2012 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,2)
-% hold on
-% for i = 1:M
-%    name = yahoo2011(i,:);
-%    index = strmatch(name, name2011, 'exact');
-%    plot(i,points2011_eoy(index),'ro')
-%    plot(i,points2011_eoy(i),'b+')
-% end
-% title('2011 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,3)
-% hold on
-% for i = 1:M
-%    name = yahoo2010(i,:);
-%    index = strmatch(name, name2010, 'exact');
-%    plot(i,points2010_eoy(index),'ro')
-%    plot(i,points2010_eoy(i),'b+')
-% end
-% title('2010 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,4)
-% hold on
-% for i = 1:M
-%    name = yahoo2009(i,:);
-%    index = strmatch(name, name2009, 'exact');
-%    plot(i,points2009_eoy(index),'ro')
-%    plot(i,points2009_eoy(i),'b+')
-% end
-% title('2009 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,5)
-% hold on
-% for i = 1:M
-%    name = yahoo2008(i,:);
-%    index = strmatch(name, name2008, 'exact');
-%    plot(i,points2008_eoy(index),'ro')
-%    plot(i,points2008_eoy(i),'b+')
-% end
-% title('2008 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% 
-% subplot(3,2,6)
-% hold on
-% for i = 1:M
-%    name = yahoo2007(i,:);
-%    index = strmatch(name, name2007, 'exact');
-%    plot(i,points2007_eoy(index),'ro')
-%    plot(i,points2007_eoy(i),'b+')
-% end
-% title('2007 Top 30: Yahoo Preseason vs. Actual')
-% xlabel('Ranking')
-% ylabel('Fantasy Points')
-% leg_yahoo = legend('Yahoo','Actual');
-% newPosition = [0.45 0.0 0.15 0.08];
-% newUnits = 'normalized';
-% set(leg_yahoo,'Position', newPosition,'Units', newUnits);
+err_simple_linear_prediction = [ ...
+    err_simple_linear_prediction2008, err_simple_linear_prediction2009, ...
+    err_simple_linear_prediction2010, err_simple_linear_prediction2011, ...
+    err_simple_linear_prediction2012];
+
+
+
+
+
+
+
+
+
+
+
+
 
 %###############################################################
 % Compute Positional Error
