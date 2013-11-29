@@ -41,16 +41,6 @@ clc
 % year.
 M = 30;
 
-
-
-
-
-
-
-
-
-
-
 %###############################################################
 % Simple Regression
 %###############################################################
@@ -71,7 +61,7 @@ for i = 1:M
 end
 % The current year data is already sorted, so compare our
 % result with the vector 1:30 to get error
-err_simple_linear_prediction2008 = sum(quantify_error(simple_linear_prediction2008,1:30));
+err_simple_linear_prediction2008 = sum(quantify_error_dcg(simple_linear_prediction2008,1:30));
 
 % Predict 2009 results using 2008 results
 simple_linear_prediction2009 = zeros(M,1);
@@ -87,7 +77,7 @@ for i = 1:M
 end
 % The current year data is already sorted, so compare our
 % result with the vector 1:30 to get error
-err_simple_linear_prediction2009 = sum(quantify_error(simple_linear_prediction2009,1:30));
+err_simple_linear_prediction2009 = sum(quantify_error_dcg(simple_linear_prediction2009,1:30));
 
 % Predict 2010 results using 2009 results
 simple_linear_prediction2010 = zeros(M,1);
@@ -103,7 +93,7 @@ for i = 1:M
 end
 % The current year data is already sorted, so compare our
 % result with the vector 1:30 to get error
-err_simple_linear_prediction2010 = sum(quantify_error(simple_linear_prediction2010,1:30));
+err_simple_linear_prediction2010 = sum(quantify_error_dcg(simple_linear_prediction2010,1:30));
 
 % Predict 2011 results using 2010 results
 simple_linear_prediction2011 = zeros(M,1);
@@ -124,7 +114,7 @@ for i = 1:M
 end
 % The current year data is already sorted, so compare our
 % result with the vector 1:30 to get error
-err_simple_linear_prediction2011 = sum(quantify_error(simple_linear_prediction2011,1:30));
+err_simple_linear_prediction2011 = sum(quantify_error_dcg(simple_linear_prediction2011,1:30));
 
 % Predict 2012 results using 2011 results
 simple_linear_prediction2012 = zeros(M,1);
@@ -140,7 +130,7 @@ for i = 1:M
 end
 % The current year data is already sorted, so compare our
 % result with the vector 1:30 to get error
-err_simple_linear_prediction2012 = sum(quantify_error(simple_linear_prediction2012,1:30));
+err_simple_linear_prediction2012 = sum(quantify_error_dcg(simple_linear_prediction2012,1:30));
 
 %###############################################################
 % Aggregate Data
@@ -150,18 +140,6 @@ err_simple_linear_prediction = [ ...
     err_simple_linear_prediction2008, err_simple_linear_prediction2009, ...
     err_simple_linear_prediction2010, err_simple_linear_prediction2011, ...
     err_simple_linear_prediction2012];
-
-
-
-
-
-
-
-
-
-
-
-
 
 %###############################################################
 % Compute Positional Error
@@ -367,13 +345,16 @@ err_yahoo = [err_dcg_yahoo_2007, err_dcg_yahoo_2008, err_dcg_yahoo_2009, ...
 
 rankErr2 = figure('Position', [2000, 2000, 600, 350]);
 
+err_simple_linear_prediction = [0, err_simple_linear_prediction];
+
 hold on
-X = [err_espn', err_yahoo'];
+X = [err_espn', err_yahoo', err_simple_linear_prediction'];
 bar(X)
-title('ESPN/Yahoo Preseason Ranking Error')
-legend('ESPN','Yahoo')
+title('Discounted Cumulative Gain of Naive Ranking Strategies')
+legend('ESPN','Yahoo', 'Previous Year','Location','NorthWest')
 xlabel('Year')
 ylabel('Discounted Cumulative Gain')
+xlim([0.5,6.5])
 
 %###############################################################
 % Save Images
