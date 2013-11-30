@@ -44,11 +44,11 @@ format short
 M = 30;
 
 % Max number of principle components to consider
-MAX_PRINCIPLE_COMPONENTS = 13;
+MAX_PRINCIPLE_COMPONENTS = 10;
 
 PCA_lin_reg = zeros(MAX_PRINCIPLE_COMPONENTS,1);
 
-for PRINCIPLE_COMPONENTS = 1:MAX_PRINCIPLE_COMPONENTS
+for PRINCIPLE_COMPONENTS = 10:MAX_PRINCIPLE_COMPONENTS
 
     %############################################################
     % Train 
