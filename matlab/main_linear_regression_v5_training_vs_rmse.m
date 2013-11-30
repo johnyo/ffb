@@ -51,7 +51,7 @@ for i = 1:length(samples)
     namesToRank = espn2012(1:M,:);
 
     [sorted_Y_test, names_to_be_predicted, predicted_lin_reg_2012, B ] = ...
-        function_lin_reg_all_features( namesToRank, namesToRank);
+        function_lin_reg( namesToRank, namesToRank);
 
     %############################################################
     % Quantify how good our rankings were
