@@ -76,7 +76,7 @@ My dataset includes NFL statistics for over 700 players for every year from 2007
 
 Discounted cumulative gain (DCG) will be used to assess WR rankings. It rewards ranking good players highly and penalizes ranking bad players too high. A higher DCG is better:\\
 $DCG = rel_1 + \sum\limits_{i=2}^{p} \frac{rel_i}{\log_2(i)}$, and the relevance weights are: $rel_i = \frac{1}{\text{actual end of year rank}}$ \\
-Using DCG, the dataset can be analyzed by looking at the performance of ESPN, Yahoo, and simple regression across the years.
+Using DCG, the dataset can be analyzed by looking at the performance of ESPN, Yahoo, and simple regression across the years. Specifically note ESPN's 2012 DCG is 1.7991 and Yahoo's is 1.8100. These are the benchmarks for performance.
 
 \begin{figure}[h]
 \begin{centering}
@@ -128,7 +128,7 @@ The linear regression results can be improved by picking out specific features t
 
 \begin{table}[ht] 
 \centering % used for centering table 
-\begin{tabular}{c c c c} % centered columns (4 columns) 
+\begin{tabular}{c c c} % centered columns (4 columns) 
 \hline\hline %inserts double horizontal lines 
 \# Features & Features & DCG \\% inserts table 
 %heading 
@@ -145,23 +145,56 @@ The linear regression results can be improved by picking out specific features t
 \label{tab:red}
 \end{table} 
 
-Feature reduction greatly improves the results! However, performance is still short of experts at ESPN and Yahoo. Now the method takes advantage of the fact that there are many types of receivers in the NFL, including those who play in the slot and catch lots of short passes, those who play out wide and catch very few longer passes, and all-stars who do it all. This insight prompts clustering receivers by type period to prediction, which is done using K-Means as shown in Figure \ref{fig:means}.
+Feature reduction greatly improves the results! However, performance is still short of experts at ESPN and Yahoo. Now the method takes advantage of the fact that there are many types of receivers in the NFL, including those who play in the slot and catch lots of short passes, those who play out wide and catch very few longer passes, and all-stars who do it all. This insight prompts clustering receivers by type period to prediction, which is done using K-Means as shown in Figure \ref{fig:means}. 
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[width=6in]{media/kmeans.png}
+\includegraphics[width=7in]{media/kmeans.png}
 \caption{Results of k-means clustering in 2 and 3 dimensions.}
 \label{fig:means}
 \end{centering}
 \end{figure}
 
+After grouping players using K-Means, each group is predicted individually. Feature reduction is employed by using both 2 and 6 features. The results of each mixture's predictions are then combined to produce a single top 30 WR list for 2012, which is then scored using DCG as shown in Table \ref{tab:km}. A DCG of 1.8063 is obtained, which beats ESPN, but not Yahoo.
 
+\begin{table}[ht] 
+\centering % used for centering table 
+\begin{tabular}{c c c c} % centered columns (4 columns) 
+\hline\hline %inserts double horizontal lines 
+\# Mixtures & K-Means Features & DCG (6 Features) & DCG (2 Features) \\% inserts table 
+%heading 
+\hline % inserts single horizontal line 
+2 & Catches, Fantasy Points & 1.7601 & 1.8063 \\
+2 & Fantasy Points & 1.7601 & 1.7925 \\
+3 & Fantasy Points & 1.3621 & 1.7880 \\
+2 & Targets & 1.2053 & 1.7877 \\
+2 & Catches, Fantasy Points, Targets & 1.1887 & 1.7863 \\
+2 & Catches & 1.1811 & 1.7814 \\
+2 & Touchdowns & 1.1107 & 1.7747 \\
+2 & Yards & 1.0857 & 1.4428 \\
+\hline %inserts single line 
+\end{tabular} 
+\caption{K-Means mixture model results through several types of runs.}
+\label{tab:km}
+\end{table} 
+
+The results of PCA and PCA Regression in Figure \ref{fig:pca} show that the majority of the variance in our data is explained by the first 4 principle components. Using PCA regression with 10 principle components, we are able to out-perform the experts at both Yahoo and ESPN by producing a DCG of 1.8132.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[width=4in]{media/pca.png}
+\caption{PCA and PCA regression run with varying numbers of principle components. Note how the DCG goes up as enough principle components are chosen to explain the majority of the variance.}
+\label{fig:pca}
+\end{centering}
+\end{figure}
 
 %#####################################################################################
 %	Conclusions
 %#####################################################################################
 
 \section{Conclusions}
+
+Several machine learning approaches to ranking NFL receivers are shown. The best results come from PCA regression with 10 principle components. This method outperforms the experts at ESPN and Yahoo for the 2012 season. Future work could include examining expanding this to predict which players will have the best careers, predicting 2 or 3 years in advance, and refining the model by incorporating more data from previous years.
 
 %#####################################################################################
 %	Bibliography
