@@ -43,342 +43,374 @@ format short
 % year.
 M = 30;
 
-%myFig = figure('Position', [2000, 2000, 600, 350]);
+% Max number of principle components to consider
+MAX_PRINCIPLE_COMPONENTS = 13;
 
-%############################################################
-% Train 
-%############################################################
-% Train with X as all data up to 2010 + 2011 preseason rankings, 
-% and then use Y as the 2011 end of year results
+PCA_lin_reg = zeros(MAX_PRINCIPLE_COMPONENTS,1);
 
-receiving_yds2010_delta1_train = [];
-receiving_tds2010_delta1_train = [];
-receiving_yds2010_delta2_train = [];
-receiving_tds2010_delta2_train = [];
-receiving_yds2010_delta3_train = [];
-receiving_tds2010_delta3_train = [];
-points2010_eoy_train = [];
-receiving_yds2010_train = [];
-receiving_tds2010_train = [];
-receiving_targets2010_train = [];
-receiving_catches2010_train = [];
-espn2011_train = [];
-yahoo2011_train = [];
+for PRINCIPLE_COMPONENTS = 1:MAX_PRINCIPLE_COMPONENTS
 
-Y_train = [];
+    %############################################################
+    % Train 
+    %############################################################
+    % Train with X as all data up to 2010 + 2011 preseason rankings, 
+    % and then use Y as the 2011 end of year results
 
-for index2011 = 1:M
-    
-    % Get the players name from the top 30 ESPN preseason list for 2011
-    name = espn2011(index2011,:);
-    
-    % only predict players that played in 2010 as well
-    index2010 = strmatch(name, name2010, 'exact');
-        
-    if( isempty(index2010) )
-        
-        disp('Skipped this player in TRAINING because he didnt play in 2010')
-        name
-        
-    else
+    receiving_yds2010_delta1_train = [];
+    receiving_tds2010_delta1_train = [];
+    receiving_yds2010_delta2_train = [];
+    receiving_tds2010_delta2_train = [];
+    receiving_yds2010_delta3_train = [];
+    receiving_tds2010_delta3_train = [];
+    points2010_eoy_train = [];
+    receiving_yds2010_train = [];
+    receiving_tds2010_train = [];
+    receiving_targets2010_train = [];
+    receiving_catches2010_train = [];
+    espn2011_train = [];
+    yahoo2011_train = [];
 
-        % Save the players' preseason espn ranking
-        espn2011_train = [ espn2011_train; index2011 ];
-        % Save the player's preseason Yahoo ranking
-        yahoo2011_train = [ yahoo2011_train; strmatch(name, yahoo2011, 'exact') ];
+    Y_train = [];
 
-        % Get the players data from the 2010 season
-        points2010_eoy_train = [ points2010_eoy_train; points2010_eoy(index2010) ];
-        receiving_yds2010_train = [ receiving_yds2010_train; receiving_yds2010(index2010) ];
-        receiving_tds2010_train = [ receiving_tds2010_train; receiving_tds2010(index2010) ];
-        receiving_targets2010_train = [ receiving_targets2010_train; receiving_targets2010(index2010) ];
-        receiving_catches2010_train = [ receiving_catches2010_train; receiving_catches2010(index2010) ];
+    for index2011 = 1:M
 
-        % Find player in the 2009 data
-        index2009 = strmatch(name, name2009, 'exact');   
+        % Get the players name from the top 30 ESPN preseason list for 2011
+        name = espn2011(index2011,:);
 
-        % If the player did not play in 2009, set their delta to 0
-        if( isempty(index2009) )
+        % only predict players that played in 2010 as well
+        index2010 = strmatch(name, name2010, 'exact');
 
-            receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; 0];
-            receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; 0];
+        if( isempty(index2010) )
 
-        % If they did play in 2009, calculate their delta
+            disp('Skipped this player in TRAINING because he didnt play in 2010')
+            name
+
         else
 
-            receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; ...
-                (receiving_yds2010(index2010) - receiving_yds2009(index2009)) ];
-            receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; ...
-                (receiving_tds2010(index2010) - receiving_tds2009(index2009)) ];
+            % Save the players' preseason espn ranking
+            espn2011_train = [ espn2011_train; index2011 ];
+            % Save the player's preseason Yahoo ranking
+            yahoo2011_train = [ yahoo2011_train; strmatch(name, yahoo2011, 'exact') ];
+
+            % Get the players data from the 2010 season
+            points2010_eoy_train = [ points2010_eoy_train; points2010_eoy(index2010) ];
+            receiving_yds2010_train = [ receiving_yds2010_train; receiving_yds2010(index2010) ];
+            receiving_tds2010_train = [ receiving_tds2010_train; receiving_tds2010(index2010) ];
+            receiving_targets2010_train = [ receiving_targets2010_train; receiving_targets2010(index2010) ];
+            receiving_catches2010_train = [ receiving_catches2010_train; receiving_catches2010(index2010) ];
+
+            % Find player in the 2009 data
+            index2009 = strmatch(name, name2009, 'exact');   
+
+            % If the player did not play in 2009, set their delta to 0
+            if( isempty(index2009) )
+
+                receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; 0];
+                receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; 0];
+
+            % If they did play in 2009, calculate their delta
+            else
+
+                receiving_yds2010_delta1_train = [ receiving_yds2010_delta1_train; ...
+                    (receiving_yds2010(index2010) - receiving_yds2009(index2009)) ];
+                receiving_tds2010_delta1_train = [ receiving_tds2010_delta1_train; ...
+                    (receiving_tds2010(index2010) - receiving_tds2009(index2009)) ];
+            end
+
+            % Find player in the 2008 data
+            index2008 = strmatch(name, name2008, 'exact');   
+
+            % If the player did not play in 2008, set their delta to 0
+            if( isempty(index2008) )
+
+                receiving_yds2010_delta2_train = [ receiving_yds2010_delta2_train; 0];
+                receiving_tds2010_delta2_train = [ receiving_tds2010_delta2_train; 0];
+
+            % If they did play in 2008, calculate their delta
+            else
+
+                receiving_yds2010_delta2_train = [ receiving_yds2010_delta2_train; ...
+                    (receiving_yds2010(index2010) - receiving_yds2008(index2008)) ];
+                receiving_tds2010_delta2_train = [ receiving_tds2010_delta2_train; ...
+                    (receiving_tds2010(index2010) - receiving_tds2008(index2008)) ];
+            end
+
+            % Find player in the 2007 data
+            index2007 = strmatch(name, name2007, 'exact');   
+
+            % If the player did not play in 2007, set their delta to 0
+            if( isempty(index2007) )
+
+                receiving_yds2010_delta3_train = [ receiving_yds2010_delta3_train; 0];
+                receiving_tds2010_delta3_train = [ receiving_tds2010_delta3_train; 0];
+
+            % If they did play in 2007, calculate their delta
+            else
+
+                receiving_yds2010_delta3_train = [ receiving_yds2010_delta3_train; ...
+                    (receiving_yds2010(index2010) - receiving_yds2007(index2007)) ];
+                receiving_tds2010_delta3_train = [ receiving_tds2010_delta3_train; ...
+                    (receiving_tds2010(index2010) - receiving_tds2007(index2007)) ];
+            end
+
+            % Add their 2011 performance for Y_train
+            Y_train = [ Y_train; points2011_eoy(index2011) ];
+
         end
 
-        % Find player in the 2008 data
-        index2008 = strmatch(name, name2008, 'exact');   
-
-        % If the player did not play in 2008, set their delta to 0
-        if( isempty(index2008) )
-
-            receiving_yds2010_delta2_train = [ receiving_yds2010_delta2_train; 0];
-            receiving_tds2010_delta2_train = [ receiving_tds2010_delta2_train; 0];
-
-        % If they did play in 2008, calculate their delta
-        else
-
-            receiving_yds2010_delta2_train = [ receiving_yds2010_delta2_train; ...
-                (receiving_yds2010(index2010) - receiving_yds2008(index2008)) ];
-            receiving_tds2010_delta2_train = [ receiving_tds2010_delta2_train; ...
-                (receiving_tds2010(index2010) - receiving_tds2008(index2008)) ];
-        end
-        
-        % Find player in the 2007 data
-        index2007 = strmatch(name, name2007, 'exact');   
-
-        % If the player did not play in 2007, set their delta to 0
-        if( isempty(index2007) )
-
-            receiving_yds2010_delta3_train = [ receiving_yds2010_delta3_train; 0];
-            receiving_tds2010_delta3_train = [ receiving_tds2010_delta3_train; 0];
-
-        % If they did play in 2007, calculate their delta
-        else
-
-            receiving_yds2010_delta3_train = [ receiving_yds2010_delta3_train; ...
-                (receiving_yds2010(index2010) - receiving_yds2007(index2007)) ];
-            receiving_tds2010_delta3_train = [ receiving_tds2010_delta3_train; ...
-                (receiving_tds2010(index2010) - receiving_tds2007(index2007)) ];
-        end
-        
-        % Add their 2011 performance for Y_train
-        Y_train = [ Y_train; points2011_eoy(index2011) ];
-        
     end
-    
+
+    % Put all of my training data together into an X matrix
+    X_train = [ ...
+        points2010_eoy_train, ...
+        receiving_yds2010_train, ...
+        receiving_tds2010_train, ...
+        receiving_targets2010_train, ...
+        receiving_catches2010_train, ...
+        receiving_yds2010_delta1_train, ...
+        receiving_tds2010_delta1_train, ...
+        receiving_yds2010_delta2_train, ...
+        receiving_tds2010_delta2_train, ...
+        receiving_yds2010_delta3_train, ...
+        receiving_tds2010_delta3_train, ...
+        espn2011_train, ...
+        yahoo2011_train ...
+        ];
+
+    [PCALoadings,PCAScores,PCAVar] = princomp(X_train);
+    betaPCR = regress(Y_train-mean(Y_train), PCAScores(:,1:PRINCIPLE_COMPONENTS));
+    betaPCR = PCALoadings(:,1:PRINCIPLE_COMPONENTS)*betaPCR;
+    betaPCR = [mean(Y_train) - mean(X_train)*betaPCR; betaPCR];
+
+    % B = ( (X_train') * X_train)^(-1) * (X_train') * Y_train;
+    % 
+    % B
+
+
+    %############################################################
+    % Test - Predict 2012 Results
+    %############################################################
+
+    receiving_yds2011_delta1_test = [];
+    receiving_tds2011_delta1_test = [];
+    receiving_yds2011_delta2_test = [];
+    receiving_tds2011_delta2_test = [];
+    receiving_yds2011_delta3_test = [];
+    receiving_tds2011_delta3_test = [];
+    points2011_eoy_test = [];
+    receiving_yds2011_test = [];
+    receiving_tds2011_test = [];
+    receiving_catches2011_test = [];
+    receiving_targets2011_test = [];
+    names_to_be_predicted = [];
+    espn2012_test = [];
+    yahoo2012_test = [];
+
+    Y_ground_truth_2012 = [];
+
+    for index2012 = 1:M
+
+        % Get the players name from the top 30 ESPN preseason list for 2012
+        name = espn2012(index2012,:);
+
+        % only predict players that played in 2011 as well
+        index2011 = strmatch(name, name2011, 'exact');
+
+        if( isempty(index2011) )
+
+            disp('Skipped this player in TESTING because he didnt play in 2011')
+            name
+
+        else
+
+            % Save the players' preseason espn ranking
+            espn2012_test = [ espn2012_test; index2012 ];
+            % Save the player's preseason Yahoo ranking
+            yahoo2012_test = [ yahoo2012_test; strmatch(name, yahoo2012, 'exact') ];
+
+            % Get the players data from the 2011 season
+            points2011_eoy_test = [ points2011_eoy_test; points2011_eoy(index2011) ];
+            receiving_yds2011_test = [ receiving_yds2011_test; receiving_yds2011(index2011) ];
+            receiving_tds2011_test = [ receiving_tds2011_test; receiving_tds2011(index2011) ];
+            receiving_targets2011_test = [ receiving_targets2011_test; receiving_targets2011(index2011) ];
+            receiving_catches2011_test = [ receiving_catches2011_test; receiving_catches2011(index2011) ];
+
+            % Find player in the 2010 data
+            index2010 = strmatch(name, name2010, 'exact');   
+
+            % If the player did not play in 2010, set their delta to 0
+            if( isempty(index2010) )
+
+                receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; 0];
+                receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; 0];
+
+            % If they did play in 2010, calculate their delta
+            else
+
+                receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; ...
+                    (receiving_yds2011(index2011) - receiving_yds2010(index2010)) ];
+                receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; ...
+                    (receiving_tds2011(index2011) - receiving_tds2010(index2010)) ];
+            end
+
+            % Find player in the 2009 data
+            index2009 = strmatch(name, name2009, 'exact');   
+
+            % If the player did not play in 2009, set their delta to 0
+            if( isempty(index2009) )
+
+                receiving_yds2011_delta2_test = [ receiving_yds2011_delta2_test; 0];
+                receiving_tds2011_delta2_test = [ receiving_tds2011_delta2_test; 0];
+
+            % If they did play in 2009, calculate their delta
+            else
+
+                receiving_yds2011_delta2_test = [ receiving_yds2011_delta2_test; ...
+                    (receiving_yds2011(index2011) - receiving_yds2009(index2009)) ];
+                receiving_tds2011_delta2_test = [ receiving_tds2011_delta2_test; ...
+                    (receiving_tds2011(index2011) - receiving_tds2009(index2009)) ];
+            end
+
+            % Find player in the 2008 data
+            index2008 = strmatch(name, name2008, 'exact');   
+
+            % If the player did not play in 2008, set their delta to 0
+            if( isempty(index2008) )
+
+                receiving_yds2011_delta3_test = [ receiving_yds2011_delta3_test; 0];
+                receiving_tds2011_delta3_test = [ receiving_tds2011_delta3_test; 0];
+
+            % If they did play in 2008, calculate their delta
+            else
+
+                receiving_yds2011_delta3_test = [ receiving_yds2011_delta3_test; ...
+                    (receiving_yds2011(index2011) - receiving_yds2008(index2008)) ];
+                receiving_tds2011_delta3_test = [ receiving_tds2011_delta3_test; ...
+                    (receiving_tds2011(index2011) - receiving_tds2008(index2008)) ];
+            end
+
+            % Add their 2012 performance for our ground truth
+            Y_ground_truth_2012 = [ Y_ground_truth_2012; points2012_eoy(index2012) ];
+
+            % save the name 
+            names_to_be_predicted = [names_to_be_predicted; name];
+
+        end
+
+    end
+
+    X_test = [ ...
+        points2011_eoy_test, ...
+        receiving_yds2011_test, ...
+        receiving_tds2011_test, ...
+        receiving_targets2011_test, ...
+        receiving_catches2011_test, ...
+        receiving_yds2011_delta1_test, ... 
+        receiving_tds2011_delta1_test, ...
+        receiving_yds2011_delta2_test, ... 
+        receiving_tds2011_delta2_test, ...
+        receiving_yds2011_delta3_test, ... 
+        receiving_tds2011_delta3_test, ...
+        espn2012_test, ...
+        yahoo2012_test ...
+        ];
+
+    % Predict 
+    % Y_test = X_test * B;
+    Y_test = [ones(M,1) X_test]*betaPCR;
+
+    %############################################################
+    % Now rank players based on fantasy point predictions
+    %############################################################
+
+    [sorted_Y_test, sortIndices] = sort(Y_test);
+    sorted_Y_test = flipud(sorted_Y_test);
+    sortIndices = flipud(sortIndices);
+
+    predicted_lin_reg_2012 = names_to_be_predicted(sortIndices,:);
+
+    predicted_espn2012 = espn2012(1:M,:);
+
+    predicted_yahoo2012 = yahoo2012(1:M,:);
+
+    actual = name2012(1:M,:);
+
+    %############################################################
+    % Quantify how good our rankings were
+    %############################################################
+
+    len = size(predicted_lin_reg_2012,1);
+    rank_lin_reg_2012 = zeros(len,1);
+    rank_espn_2012 = zeros(len,1);
+    rank_yahoo_2012 = zeros(len,1);
+
+    for i = 1:len
+
+        rank_lin_reg_2012(i) = strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact');
+        rank_espn_2012(i) = strmatch(predicted_espn2012(i,:), name2012, 'exact');
+        rank_yahoo_2012(i) = strmatch(predicted_yahoo2012(i,:), name2012, 'exact');
+
+    end
+
+    err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30));
+    err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30));
+    err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30));
+
+    err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30));
+    err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30));
+    err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30));
+
+    actual_max_pts = 0;
+    lin_reg_pts = 0;
+    espn_pts = 0;
+    yahoo_pts = 0;
+
+    array_actual = zeros(len,1);
+    array_lin_reg = zeros(len,1);
+    array_espn = zeros(len,1);
+    array_yahoo = zeros(len,1);
+
+    for i = 1:len
+
+        actual_max_pts = actual_max_pts + points2012_eoy( i );
+        array_actual(i) = points2012_eoy( i );
+
+        lin_reg_pts = lin_reg_pts + points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
+        array_lin_reg(i) = points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
+
+        espn_pts = espn_pts + points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
+        array_espn(i) = points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
+
+        yahoo_pts = yahoo_pts + points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
+        array_yahoo(i) = points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
+
+    end
+
+    PCA_lin_reg(PRINCIPLE_COMPONENTS) = err_dcg_lin_reg_2012;
+        
 end
 
-% Put all of my training data together into an X matrix
-X_train = [ ...
-    points2010_eoy_train, ...
-    receiving_yds2010_train, ...
-    receiving_tds2010_train, ...
-    receiving_targets2010_train, ...
-    receiving_catches2010_train, ...
-    receiving_yds2010_delta1_train, ...
-    receiving_tds2010_delta1_train, ...
-    receiving_yds2010_delta2_train, ...
-    receiving_tds2010_delta2_train, ...
-    receiving_yds2010_delta3_train, ...
-    receiving_tds2010_delta3_train, ...
-    espn2011_train, ...
-    yahoo2011_train ...
-    ];
+figure
 
-coeff = pca(X_train)
+subplot(2,1,1)
+varianceExplained = 100*cumsum(PCAVar)./sum(PCAVar);
+plot(1:MAX_PRINCIPLE_COMPONENTS, varianceExplained,'LineWidth',3)
+title('Percentage of Variance Explained')
+ylabel('Percentage')
+xlabel('Number of Principle Components')
+ylim([65,105])
+
+subplot(2,1,2)
+
+plot(1:MAX_PRINCIPLE_COMPONENTS,PCA_lin_reg,'LineWidth',3)
+title('PCA Regression Results')
+ylabel('Discounted Cumulative Gain')
+xlabel('Number of Principle Components')
 
 
 
-% B = ( (X_train') * X_train)^(-1) * (X_train') * Y_train;
-% 
-% B
 
 
-% %############################################################
-% % Test - Predict 2012 Results
-% %############################################################
-% 
-% receiving_yds2011_delta1_test = [];
-% receiving_tds2011_delta1_test = [];
-% receiving_yds2011_delta2_test = [];
-% receiving_tds2011_delta2_test = [];
-% receiving_yds2011_delta3_test = [];
-% receiving_tds2011_delta3_test = [];
-% points2011_eoy_test = [];
-% receiving_yds2011_test = [];
-% receiving_tds2011_test = [];
-% receiving_catches2011_test = [];
-% receiving_targets2011_test = [];
-% names_to_be_predicted = [];
-% espn2012_test = [];
-% yahoo2012_test = [];
-% 
-% Y_ground_truth_2012 = [];
-% 
-% for index2012 = 1:M
-%  
-%     % Get the players name from the top 30 ESPN preseason list for 2012
-%     name = espn2012(index2012,:);
-%     
-%     % only predict players that played in 2011 as well
-%     index2011 = strmatch(name, name2011, 'exact');
-%         
-%     if( isempty(index2011) )
-%         
-%         disp('Skipped this player in TESTING because he didnt play in 2011')
-%         name
-%         
-%     else
-% 
-%         % Save the players' preseason espn ranking
-%         espn2012_test = [ espn2012_test; index2012 ];
-%         % Save the player's preseason Yahoo ranking
-%         yahoo2012_test = [ yahoo2012_test; strmatch(name, yahoo2012, 'exact') ];
-%           
-%         % Get the players data from the 2011 season
-%         points2011_eoy_test = [ points2011_eoy_test; points2011_eoy(index2011) ];
-%         receiving_yds2011_test = [ receiving_yds2011_test; receiving_yds2011(index2011) ];
-%         receiving_tds2011_test = [ receiving_tds2011_test; receiving_tds2011(index2011) ];
-%         receiving_targets2011_test = [ receiving_targets2011_test; receiving_targets2011(index2011) ];
-%         receiving_catches2011_test = [ receiving_catches2011_test; receiving_catches2011(index2011) ];
-% 
-%         % Find player in the 2010 data
-%         index2010 = strmatch(name, name2010, 'exact');   
-% 
-%         % If the player did not play in 2010, set their delta to 0
-%         if( isempty(index2010) )
-% 
-%             receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; 0];
-%             receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; 0];
-% 
-%         % If they did play in 2010, calculate their delta
-%         else
-% 
-%             receiving_yds2011_delta1_test = [ receiving_yds2011_delta1_test; ...
-%                 (receiving_yds2011(index2011) - receiving_yds2010(index2010)) ];
-%             receiving_tds2011_delta1_test = [ receiving_tds2011_delta1_test; ...
-%                 (receiving_tds2011(index2011) - receiving_tds2010(index2010)) ];
-%         end
-%         
-%         % Find player in the 2009 data
-%         index2009 = strmatch(name, name2009, 'exact');   
-% 
-%         % If the player did not play in 2009, set their delta to 0
-%         if( isempty(index2009) )
-% 
-%             receiving_yds2011_delta2_test = [ receiving_yds2011_delta2_test; 0];
-%             receiving_tds2011_delta2_test = [ receiving_tds2011_delta2_test; 0];
-% 
-%         % If they did play in 2009, calculate their delta
-%         else
-% 
-%             receiving_yds2011_delta2_test = [ receiving_yds2011_delta2_test; ...
-%                 (receiving_yds2011(index2011) - receiving_yds2009(index2009)) ];
-%             receiving_tds2011_delta2_test = [ receiving_tds2011_delta2_test; ...
-%                 (receiving_tds2011(index2011) - receiving_tds2009(index2009)) ];
-%         end
-%         
-%         % Find player in the 2008 data
-%         index2008 = strmatch(name, name2008, 'exact');   
-% 
-%         % If the player did not play in 2008, set their delta to 0
-%         if( isempty(index2008) )
-% 
-%             receiving_yds2011_delta3_test = [ receiving_yds2011_delta3_test; 0];
-%             receiving_tds2011_delta3_test = [ receiving_tds2011_delta3_test; 0];
-% 
-%         % If they did play in 2008, calculate their delta
-%         else
-% 
-%             receiving_yds2011_delta3_test = [ receiving_yds2011_delta3_test; ...
-%                 (receiving_yds2011(index2011) - receiving_yds2008(index2008)) ];
-%             receiving_tds2011_delta3_test = [ receiving_tds2011_delta3_test; ...
-%                 (receiving_tds2011(index2011) - receiving_tds2008(index2008)) ];
-%         end
-% 
-%         % Add their 2012 performance for our ground truth
-%         Y_ground_truth_2012 = [ Y_ground_truth_2012; points2012_eoy(index2012) ];
-% 
-%         % save the name 
-%         names_to_be_predicted = [names_to_be_predicted; name];
-% 
-%     end
-%     
-% end
-% 
-% X_test = [ ...
-%     points2011_eoy_test, ...
-%     receiving_yds2011_test, ...
-%     receiving_tds2011_test, ...
-%     receiving_targets2011_test, ...
-%     receiving_catches2011_test, ...
-%     receiving_yds2011_delta1_test, ... 
-%     receiving_tds2011_delta1_test, ...
-%     receiving_yds2011_delta2_test, ... 
-%     receiving_tds2011_delta2_test, ...
-%     receiving_yds2011_delta3_test, ... 
-%     receiving_tds2011_delta3_test, ...
-%     espn2012_test, ...
-%     yahoo2012_test ...
-%     ];
-% 
-% % Predict 
-% Y_test = X_test * B;
-% 
-% %############################################################
-% % Now rank players based on fantasy point predictions
-% %############################################################
-% 
-% [sorted_Y_test, sortIndices] = sort(Y_test);
-% sorted_Y_test = flipud(sorted_Y_test);
-% sortIndices = flipud(sortIndices);
-% 
-% predicted_lin_reg_2012 = names_to_be_predicted(sortIndices,:)
-% 
-% predicted_espn2012 = espn2012(1:M,:)
-% 
-% predicted_yahoo2012 = yahoo2012(1:M,:)
-% 
-% actual = name2012(1:M,:)
-% 
-% %############################################################
-% % Quantify how good our rankings were
-% %############################################################
-% 
-% len = size(predicted_lin_reg_2012,1);
-% rank_lin_reg_2012 = zeros(len,1);
-% rank_espn_2012 = zeros(len,1);
-% rank_yahoo_2012 = zeros(len,1);
-% 
-% for i = 1:len
-% 
-%     rank_lin_reg_2012(i) = strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact');
-%     rank_espn_2012(i) = strmatch(predicted_espn2012(i,:), name2012, 'exact');
-%     rank_yahoo_2012(i) = strmatch(predicted_yahoo2012(i,:), name2012, 'exact');
-%    
-% end
-% 
-% err_lin_reg_2012 = sum(quantify_error(rank_lin_reg_2012,1:30))
-% err_espn_2012 = sum(quantify_error(rank_espn_2012,1:30))
-% err_yahoo_2012 = sum(quantify_error(rank_yahoo_2012,1:30))
-% 
-% err_dcg_lin_reg_2012 = sum(quantify_error_dcg(rank_lin_reg_2012,1:30))
-% err_dcg_espn_2012 = sum(quantify_error_dcg(rank_espn_2012,1:30))
-% err_dcg_yahoo_2012 = sum(quantify_error_dcg(rank_yahoo_2012,1:30))
-% 
-% actual_max_pts = 0;
-% lin_reg_pts = 0;
-% espn_pts = 0;
-% yahoo_pts = 0;
-% 
-% array_actual = zeros(len,1);
-% array_lin_reg = zeros(len,1);
-% array_espn = zeros(len,1);
-% array_yahoo = zeros(len,1);
-% 
-% for i = 1:len
-%     
-%     actual_max_pts = actual_max_pts + points2012_eoy( i );
-%     array_actual(i) = points2012_eoy( i );
-%     
-%     lin_reg_pts = lin_reg_pts + points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
-%     array_lin_reg(i) = points2012_eoy( strmatch(predicted_lin_reg_2012(i,:), name2012, 'exact') );
-%     
-%     espn_pts = espn_pts + points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
-%     array_espn(i) = points2012_eoy( strmatch(espn2012(i,:), name2012, 'exact') );
-%     
-%     yahoo_pts = yahoo_pts + points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
-%     array_yahoo(i) = points2012_eoy( strmatch(yahoo2012(i,:), name2012, 'exact') );
-%     
-% end
-% 
 % actual_max_pts
 % lin_reg_pts
 % espn_pts
@@ -387,21 +419,21 @@ coeff = pca(X_train)
 % err_rmse_lin_reg_2012 = quantify_error_rmse(array_lin_reg,array_actual)
 % err_rmse_espn_2012 = quantify_error_rmse(array_espn,array_actual)
 % err_rmse_yahoo_2012 = quantify_error_rmse(array_yahoo,array_actual)
+
+%############################################################
+% Plots
+%############################################################
+
+% figure
 % 
-% %############################################################
-% % Plots
-% %############################################################
-% 
-% % figure
-% % 
-% % X = [ array_actual, array_lin_reg, array_espn, array_yahoo ];
-% % bar(X)
-% % xlim([0,30])
-% % legend('Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
-% % xlabel('Player Rank')
-% % ylabel('End of Year Fantasy Points')
-% % title('Top 30 NFL Wide Receivers For Each method')
-% 
+% X = [ array_actual, array_lin_reg, array_espn, array_yahoo ];
+% bar(X)
+% xlim([0,30])
+% legend('Actual Top 30','Linear Regression','ESPN Experts','Yahoo Experts')
+% xlabel('Player Rank')
+% ylabel('End of Year Fantasy Points')
+% title('Top 30 NFL Wide Receivers For Each method')
+
 % figure
 % hold on
 % plot(array_actual, 'ro', 'LineWidth', 2)
