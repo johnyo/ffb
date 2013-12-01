@@ -55,7 +55,6 @@ Department of Electrical and Computer Engineering\\
 \begin{abstract}
 Fantasy football is a fast growing, multi-billion dollar industry centered around projecting which players will perform the best over the course of a season. Correctly predicting which players will play well greatly improves your team's year-long performance, whereas wasting a high pick on a low achiever can ruin your season. This paper focuses on an optimal strategy for predicting a list of the top 30 non-rookie NFL wide receivers for a season, using only data available prior to the start of the season.
 
-which NFL wide receivers will have the best fantasy football season using data available prior to the beginning of the season.
 \end{abstract}
 
 %#####################################################################################
@@ -64,13 +63,13 @@ which NFL wide receivers will have the best fantasy football season using data a
 
 \section{Introduction \& Related Work}
 
-According to the Fantasy Sports Trade Association, over 10 percent of the US population spent 12 billion dollars playing fantasy football in 2012. Given such a large market, a slight statistical advantage could provide significant profits in fantasy football leagues. Specifically, a correct pre-season ranking of wide receivers (WRs) will allow owners to pick the best players to join their teams during the pre season fantasy football draft, setting them up for year-long success. However, ranking players is difficult. Preseason rankings from teams of experts at ESPN and Yahoo are correct for only a small minority of players. This paper compares several machine learning techniques for ranking WRs, including linear regression, feature reduction, K-Means clustering, mixture models, and PCA. A PCA regression technique which outperforms ESPN and Yahoo experts is presented.
+According to the Fantasy Sports Trade Association, over 10 percent of the US population spent 12 billion dollars playing fantasy football in 2012. Given such a large market, a slight statistical advantage could provide significant profits in fantasy football leagues. Specifically, a correct pre-season ranking of wide receivers (WRs) will allow owners to pick the best players to join their teams during the pre season fantasy football draft, setting them up for year-long success. However, ranking players is difficult. Preseason rankings from teams of experts at ESPN and Yahoo are correct for only a small minority of players. This paper compares several machine learning techniques for ranking WRs, including linear regression, feature reduction, K-Means clustering, mixture models, and PCA. A PCA regression technique which outperforms ESPN and Yahoo experts is presented. Throughout the paper, standard scoring is assumed: Fantasy Points = 6 $\cdot$ TDs + 0.1 $\cdot$ Yards.
 
-While countless fantasy football websites exist, the major players are ESPN, Yahoo, the NFL, 4for4, and FantasyPros. None of these entities releases their methods publicly. Tim Mathews at the University of Southampton\footnote{Mathews, Tim, et. al. “Competing with Humans at Fantasy Football: Team Formation in Large Partially-Observable Domain.” Association for the Advancement of Artificial Intelligence, 2012.} explored using Bayesian reinforcement learning for week-to-week team management during the season. Matt Bookman at Stanford used linear regression to predict week-to-week performances during the season with limited success only in certain weeks\footnote{Bookman, Matt. "Predicting Fantasy Football - Truth in Data." Stanford CS 229 Final Project. December 14, 2012.}. The week-to-week prediction problem, however, is simplified through the use in-season data from each player, whereas in the pre-season, year-long ranking problem, predictions must be made for players who are 8 months removed from public games. Some attempts at machine learning approaches for the year-long ranking problem have been made\footnote{Kapania, Nitin. "Predicting Fantasy Football Performance with Machine Learning Techniques." Stanford CS 229 Final Project. December 14, 2012}, but did not outperform human experts. Other attempts use machine learning to outsmart other players in the same league\footnote{Becker, Adrian, et. al. "An Analytical Approach for Fantasy Football Draft and Lineup Management." MIT ORC Technical Report. November 2010.}. 
+While countless fantasy football websites exist, the major players are ESPN, Yahoo, the NFL, 4for4, and FantasyPros. None of these entities releases their methods publicly. Tim Mathews at the University of Southampton \cite{mathews} explored using Bayesian reinforcement learning for week-to-week team management during the season. Matt Bookman at Stanford used linear regression to predict week-to-week performances during the season with limited success only in certain weeks \cite{bookman}. The week-to-week prediction problem, however, is simplified through the use in-season data from each player, whereas in the pre-season, year-long ranking problem, predictions must be made for players who are 8 months removed from public games. Some attempts at machine learning approaches for the year-long ranking problem have been made \cite{kapania}, but did not outperform human experts. Other attempts use machine learning to outsmart other players in the same league \cite{becker}. 
 
 \subsection{Data Summarization}
 
-My dataset includes NFL statistics for over 700 players for every year from 2007 to 2012, however only a subset are used for prediction. There are 13 features in total: Receiving Yards, Receiving Touchdowns, Receiving Targets, Receiving Catches, ESPN Preseason Ranking, Yahoo Preseason Ranking, $\Delta$1 year Receiving Yards: (Yards in year Y-1) - (Yards in year Y-2), $\Delta$1 year Receiving TDs: (TDs in year Y-1) - (TDs in year Y-2), $\Delta$2 year Receiving Yards: (Yards in year Y-1)-(Yards in year Y-3), $\Delta$2 year Receiving TDs: (TDs in year Y-1) - (TDs in year Y-3), $\Delta$3 year Receiving Yards: (Yards in year Y-1) - (Yards in year Y-4), $\Delta$3 year Receiving TDs: (TDs in year Y-1) - (TDs in year Y-4), Fantasy Points in Previous Year: 6 $\cdot$ TDs + 0.1 $\cdot$ Yards
+My dataset includes NFL statistics for over 700 players for every year from 2007 to 2012, however only a subset are used for prediction. There are 13 features in total. 6 are standard stats: yards, touchdowns, targets, catches, ESPN rank, and Yahoo rank. I then add a field for previous year points, and 6 more 'trend' features to represent trends over the years. For example: $\Delta 1yrYds = $  (Yards in year Y-1) - (Yards in year Y-2), $\Delta 2yrYds = $  (Yards in year Y-1) - (Yards in year Y-3). A total of 6 of these features are used, for both yards and touchdowns for 1, 2, and 3 years into the past, bringing the total to 13.
 
 \subsection{Performance Criteria and Baseline}
 
@@ -80,8 +79,15 @@ Using DCG, the dataset can be analyzed by looking at the performance of ESPN, Ya
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[width=4in]{media/dcg_naive.png}
-\caption{: DCG of ESPN / Yahoo preseason rankings over the years, along with a naïve method of using the previous year’s final rankings as the next year’s preseason rankings.}
+\includegraphics[width=5in]{media/dcg_naive.png}
+\caption{DCG of ESPN/Yahoo preseason rankings by year, along with a naïve method using the previous year’s final rankings as the next year’s preseason rankings. The 2012 results (1.7991 for ESPN, 1.8100 for Yahoo) will be used as a benchmark.}
+\end{centering}
+\end{figure}
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[width=5in]{media/top30_lin_reg_all_feat.png}
+\caption{Preseason rankings versus actual points scored. Note how many of ESPN, Yahoo, and linear regression's preseason picks greatly underperform the actual best players in red. This graph shows how hard predicting rankings is.}
 \end{centering}
 \end{figure}
 
@@ -204,6 +210,18 @@ Several machine learning approaches to ranking NFL receivers are shown. The best
 
 \section{Bibliography}
 
+\begin{thebibliography}{1}
+
+\bibitem{mathews} Mathews, Tim, et. al. “Competing with Humans at Fantasy Football: Team Formation in Large Partially-Observable Domain.” Association for the Advancement of Artificial Intelligence, 2012.
+
+\bibitem{bookman} Bookman, Matt. "Predicting Fantasy Football - Truth in Data." Stanford CS 229 Final Project. December 14, 2012.
+
+\bibitem{kapania} Kapania, Nitin. "Predicting Fantasy Football Performance with Machine Learning Techniques." Stanford CS 229 Final Project. December 14, 2012.
+
+\bibitem{becker} Becker, Adrian, et. al. "An Analytical Approach for Fantasy Football Draft and Lineup Management." MIT ORC Technical Report. November 2010.
+
+\end{thebibliography}
+  
 \end{document}
 
 
