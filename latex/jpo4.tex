@@ -108,6 +108,15 @@ $\beta = [ w_{Points}, w_{Yds}, w_{TDs}, w_{Targets}, w_{Catches}, w_{\Delta 1yr
 {\bf PCA Regression:} PCA will be used to estimate the regression coefficients. Different numbers of principle components will be experimented with. PCA on X gives a principle component score, $\Omega_{n \times p}$ = a representation of X in the principle component space, and also the principle component loadings in each column of $\Lambda_{p \times p}$. $\beta$ is initially estimated as before, but by replacing X with $\Omega$ and mean centering $Y$ to give: $\beta = (\Omega^T \cdot \Omega)^{-1} \cdot \Omega^T \cdot (Y - \mu_Y) $. Then to make the results easier to interpret, $\beta$ is transformed to regression coefficients for uncentered variables by adding a mean term and adding a column of 1's to X during prediction: $\beta = [ \mu_Y - \mu_X \cdot \Lambda \cdot \beta | \Lambda \cdot \beta ]$, $Y = [1's | X ] \cdot \beta$.
 
 %#####################################################################################
+%	Open Source
+%#####################################################################################
+
+\section{Open Source}
+
+All data, models, and code needed to replicate the following results are openly available through Github at:\\
+ \url{https://github.com/johnyo/ffb}.
+
+%#####################################################################################
 %	Results
 %#####################################################################################
 
@@ -124,7 +133,7 @@ Using linear regression, $\beta$ is calculated and then used to predict point to
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[width=4in]{media/lin_reg_learning_curve.png}
+\includegraphics[width=5in]{media/lin_reg_learning_curve.png}
 \caption{Graph of RMSE and DCG as the training set size increases. Results improve with larger training sets.}
 \label{fig:learn}
 \end{centering}
@@ -191,9 +200,7 @@ After grouping players using K-Means, each group is predicted individually. Base
 The best result obtained is a DCG of 1.8063 using 2 features (catches and fantasy points in previous year) for k-means and then 2 features (touchdowns and fantasy points in previous year) for regression. This beats ESPN's experts, but not Yahoo's.
 
 \newpage
-To further improve the results, a new method must be employed. We turn to PCA.
-
-The results of PCA and PCA Regression in Figure \ref{fig:pca} show that the majority of the variance in our data is explained by the first 4 principle components. Using PCA regression with 10 principle components, following the method outlined in the 'Methods' section, we are able to out-perform the experts at both Yahoo and ESPN by producing a DCG of 1.8132.
+To further improve the results, PCA is employed. Using PCA for regression is likely to help out when "there are a large number of predictor variables, and those predictors are highly correlated or even collinear \cite{mathworks}." We have many variables here, and certain variables, such as touchdowns and yards, tend to be correlated. Therefore, this data is ideal for PCA regression. The equations outlined in the 'Methods' section are used for the regression.
 
 \begin{figure}[h]
 \begin{centering}
@@ -202,6 +209,8 @@ The results of PCA and PCA Regression in Figure \ref{fig:pca} show that the majo
 \label{fig:pca}
 \end{centering}
 \end{figure}
+
+The results of PCA and PCA Regression in Figure \ref{fig:pca} show that the majority of the variance in our data is explained by the first 4 principle components, but we can improve it by incorporating a few more principle components. Using PCA regression with 10 principle components, the method outperforms the experts at both Yahoo and ESPN by producing a DCG of 1.8132.
 
 %#####################################################################################
 %	Conclusions
@@ -236,6 +245,8 @@ Several machine learning approaches to ranking NFL receivers are shown. The best
 \bibitem{rasmussen}Rasmussen, Carl Edward. ÒThe Infinite Gaussian Mixture Model.Ó Advances in Neural Information Processing Systems, 2012.
 
 \bibitem{becker} Becker, Adrian, et. al. "An Analytical Approach for Fantasy Football Draft and Lineup Management." MIT ORC Technical Report. November 2010.
+
+\bibitem{mathworks} MathWorks. Partial Least Squares Regression and Principal Components Regression. Statistics Toolbox.
 
 \bibitem{steinbach}Steinbach, Michael, et. al. ÒA Comparison of Document Clustering Techniques.Ó Technical Report, University of Minnesota. May 2000.
 
